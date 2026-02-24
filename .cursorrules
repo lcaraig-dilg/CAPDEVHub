@@ -1,0 +1,79 @@
+# CAPDEVhub Project Rules & Context
+
+## Project Overview
+**CAPDEVhub** is a Capacity Development Hub Web Application for the **Local Government Capability Development Division (LGCDD)** of the **Department of the Interior and Local Government - National Capital Region (DILG NCR)**.
+
+This is a government website that stores and manages details of capacity development events organized by the LGCDD. The application serves as a centralized platform for tracking, managing, and organizing capability development activities for local government units in the NCR.
+
+## Tech Stack
+- **Framework**: Laravel 12.0
+- **Frontend**: TALL Stack (Tailwind CSS, Alpine.js, Laravel, Livewire)
+- **Livewire**: v4.1 with Flux Pro v2.12
+- **PHP**: ^8.2
+- **Build Tool**: Vite 7.0.7
+- **CSS**: Tailwind CSS 4.0.0
+
+## Project Structure
+- Standard Laravel application structure
+- Livewire components should be placed in `app/Livewire/`
+- Blade views in `resources/views/`
+- Frontend assets in `resources/js/` and `resources/css/`
+- Routes in `routes/web.php`
+
+## Coding Standards
+- Follow Laravel conventions and best practices
+- Use PSR-12 coding standards
+- Prefer Livewire components over traditional controllers when appropriate
+- Use Alpine.js for client-side interactivity (included with Livewire)
+- Use Tailwind CSS for styling (Tailwind 4.0 syntax)
+
+## Important Notes
+- Alpine.js is automatically included with Livewire 4.x - no need to import separately
+- Use `@livewireScripts` and `@livewireStyles` in Blade layouts
+- Flux Pro components are available - check vendor/livewire/flux-pro for available components
+- Database: SQLite by default (database/database.sqlite)
+
+## Development Workflow
+- Run `composer dev` to start development server with all services
+- Run `npm run dev` for Vite hot reload
+- Run `php artisan migrate` for database migrations
+- Use `php artisan make:livewire ComponentName` to create Livewire components
+
+## User Roles & Permissions
+The application has three user roles with different access levels:
+
+1. **User (Client)**
+   - Regular users/clients of the application
+   - Can view and access public information
+   - Limited access to data
+
+2. **Admin**
+   - Controls creation of data
+   - Can create, edit, and manage capacity development event details
+   - Cannot manipulate user data
+
+3. **Super Admin**
+   - Controls creation of data (same as Admin)
+   - Can manipulate user data (create, edit, delete users)
+   - Full administrative access to the system
+
+## Government Website Considerations
+- This is a government application - prioritize security, data privacy, and compliance
+- Consider accessibility requirements for government websites
+- Ensure proper data validation and sanitization
+- Follow government web standards and best practices
+- Implement role-based access control (RBAC) for all features
+
+## Before Making Changes
+1. Understand the existing codebase structure
+2. Check if similar functionality already exists
+3. Consider the government context and requirements
+4. Follow Laravel and Livewire conventions
+5. Ensure Tailwind classes are used correctly (Tailwind 4.0 syntax)
+6. Test changes in the browser when applicable
+
+## Common Patterns
+- Use Livewire for dynamic, server-rendered components
+- Use Alpine.js for simple client-side interactions (x-data, x-show, etc.)
+- Use Tailwind utility classes for styling
+- Follow Laravel naming conventions (PascalCase for classes, snake_case for methods)
