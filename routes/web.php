@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ProfileController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -23,4 +24,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // User profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Admin panel sections (placeholders for now)
+    Route::view('/activities', 'activities.index')->name('activities.index');
+    Route::view('/pre-post-tests', 'prepost.index')->name('prepost.index');
+    Route::view('/materials-repository', 'materials.index')->name('materials.index');
+    Route::view('/quiz', 'quiz.index')->name('quiz.index');
+    Route::view('/certificate-of-attendance', 'certificates.index')->name('certificates.index');
 });

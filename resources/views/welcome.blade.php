@@ -6,6 +6,10 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        {{-- Global favicon / web tab icon --}}
+        <link rel="icon" type="image/png" href="{{ asset('capdev-logo-png-square.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('capdev-logo-png-square.png') }}">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
