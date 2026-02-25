@@ -145,7 +145,7 @@
                 </div>
 
                 <form wire:submit.prevent="save">
-                    <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+                    <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-2" wire:loading.class="opacity-50 pointer-events-none" wire:target="save">
                         {{-- Personal Information Section --}}
                         <div class="border-b border-gray-200 pb-4">
                             <h4 class="text-md font-semibold text-gray-900 mb-4">Personal Information</h4>
@@ -212,7 +212,6 @@
                                     <input 
                                         type="date" 
                                         wire:model="formData.date_of_birth"
-                                        wire:change="updatedFormDataDateOfBirth"
                                         max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                                         min="1900-01-01"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -222,7 +221,8 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Age (Auto-computed)</label>
                                     <input 
-                                        type="number" 
+                                        type="number"
+                                        placeholder="Auto-computed after submitted"
                                         wire:model="formData.age"
                                         readonly
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600"
@@ -423,15 +423,28 @@
                         <button 
                             type="button"
                             wire:click="closeModal"
-                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                            wire:loading.attr="disabled"
+                            wire:target="save"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Cancel
                         </button>
                         <button 
                             type="submit"
-                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition"
+                            wire:loading.attr="disabled"
+                            wire:target="save"
+                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                         >
-                            {{ $editingUserId ? 'Update' : 'Create' }}
+                            <span wire:loading.remove wire:target="save">
+                                {{ $editingUserId ? 'Update' : 'Create' }}
+                            </span>
+                            <span wire:loading wire:target="save" class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                {{ $editingUserId ? 'Updating...' : 'Creating...' }}
+                            </span>
                         </button>
                     </div>
                 </form>
