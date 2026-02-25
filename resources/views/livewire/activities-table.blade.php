@@ -384,18 +384,65 @@
                     {{-- Registration Link Section --}}
                     <div class="border-b pb-4">
                         <h4 class="text-md font-semibold text-gray-900 mb-3">Registration Link</h4>
-                        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                            <div class="flex-1">
+                        <div class="flex flex-col gap-4">
+                            <div>
                                 <p class="text-sm text-gray-600 mb-2">Shareable Link:</p>
                                 <a href="{{ url('/register/' . $viewingActivity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
                                     {{ url('/register/' . $viewingActivity->shareable_link) }}
                                 </a>
                             </div>
-                            <div class="flex-shrink-0">
-                                <p class="text-sm text-gray-600 mb-2">QR Code:</p>
-                                <div class="bg-white p-2 rounded border">
+
+                            <div 
+                                class="flex flex-col items-center gap-2"
+                                x-data
+                            >
+                                <p class="text-sm text-gray-600">QR Code:</p>
+                                <div class="bg-white p-2 rounded border inline-block">
                                     {!! $this->getQrCode($viewingActivity->shareable_link) !!}
                                 </div>
+                                <button
+                                    type="button"
+                                    class="mt-1 inline-flex items-center gap-1 text-xs px-3 py-1 rounded-md bg-[#013141] text-white hover:bg-[#0a7ca1] transition-colors duration-200"
+                                    @click="
+                                        const container = $el.previousElementSibling;
+                                        const svg = container.querySelector('svg');
+                                        if (!svg) return;
+
+                                        const serializer = new XMLSerializer();
+                                        const svgString = serializer.serializeToString(svg);
+                                        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                                        const url = URL.createObjectURL(svgBlob);
+                                        const img = new Image();
+
+                                        img.onload = () => {
+                                            const canvas = document.createElement('canvas');
+                                            canvas.width = img.width;
+                                            canvas.height = img.height;
+                                            const ctx = canvas.getContext('2d');
+                                            ctx.drawImage(img, 0, 0);
+                                            URL.revokeObjectURL(url);
+
+                                            canvas.toBlob((blob) => {
+                                                if (!blob) return;
+                                                const pngUrl = URL.createObjectURL(blob);
+                                                const link = document.createElement('a');
+                                                link.href = pngUrl;
+                                                link.download = 'activity-qr-{{ $viewingActivity->shareable_link }}.png';
+                                                document.body.appendChild(link);
+                                                link.click();
+                                                document.body.removeChild(link);
+                                                URL.revokeObjectURL(pngUrl);
+                                            }, 'image/png');
+                                        };
+
+                                        img.src = url;
+                                    "
+                                >
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"></path>
+                                    </svg>
+                                    <span>Save QR as image</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -434,45 +481,49 @@
         </div>
     </div>
 
-    {{-- Quill.js Rich Text Editor --}}
+    {{-- Quill.js Rich Text Editor with image resize & drag-drop modules --}}
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill-image-drop-module@1.0.3/image-drop.min.js"></script>
     <script>
         (function() {
-            let quillInstance = null;
-            let isInitialized = false;
-            
+            // Use globals so state persists across Livewire re-renders
+            window.activityQuill = window.activityQuill || {
+                instance: null,
+                initialized: false,
+            };
+
             function initQuill() {
                 const editorElement = document.getElementById('description-editor');
-                if (editorElement && !isInitialized) {
+                if (editorElement && !window.activityQuill.initialized) {
                     // Clear any existing content
                     editorElement.innerHTML = '';
                     
-                    quillInstance = new Quill('#description-editor', {
+                    const quillInstance = new Quill('#description-editor', {
                         theme: 'snow',
                         modules: {
                             toolbar: [
-                                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                                [{ 'font': [] }],
-                                [{ 'size': [] }],
+                                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                [{ font: [] }],
+                                [{ size: [] }],
                                 ['bold', 'italic', 'underline', 'strike'],
-                                [{ 'color': [] }, { 'background': [] }],
-                                [{ 'script': 'sub'}, { 'script': 'super' }],
-                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                [{ 'indent': '-1'}, { 'indent': '+1' }],
-                                [{ 'align': [] }],
+                                [{ color: [] }, { background: [] }],
+                                [{ script: 'sub' }, { script: 'super' }],
+                                [{ list: 'ordered' }, { list: 'bullet' }],
+                                [{ indent: '-1' }, { indent: '+1' }],
+                                [{ align: [] }],
                                 ['link', 'image', 'video'],
                                 ['clean']
-                            ]
-                        }
+                            ],
+                            imageResize: {
+                                modules: [ 'Resize', 'DisplaySize', 'Toolbar' ],
+                            },
+                            imageDrop: true
+                        },
                     });
 
-                    // Set initial content from Livewire
-                    @this.on('load-editor-content', (content) => {
-                        if (quillInstance && content) {
-                            quillInstance.root.innerHTML = content;
-                        }
-                    });
+                    window.activityQuill.instance = quillInstance;
 
                     // Update Livewire on text change
                     quillInstance.on('text-change', function() {
@@ -484,24 +535,25 @@
                         @this.set('formData.description', content);
                     });
 
-                    // Load existing content if editing
-                    const existingContent = @js($formData['description'] ?? '');
-                    if (existingContent) {
-                        quillInstance.root.innerHTML = existingContent;
+                    // Load existing content if editing from the hidden textarea (Livewire-bound)
+                    const hiddenInput = document.getElementById('description-hidden');
+                    if (hiddenInput && hiddenInput.value) {
+                        quillInstance.root.innerHTML = hiddenInput.value;
                     }
 
-                    isInitialized = true;
+                    window.activityQuill.initialized = true;
                 }
             }
 
             function destroyQuill() {
-                if (quillInstance) {
+                const qi = window.activityQuill.instance;
+                if (qi) {
                     const editorElement = document.getElementById('description-editor');
                     if (editorElement) {
                         editorElement.innerHTML = '';
                     }
-                    quillInstance = null;
-                    isInitialized = false;
+                    window.activityQuill.instance = null;
+                    window.activityQuill.initialized = false;
                 }
             }
 
@@ -511,7 +563,7 @@
                     const modal = document.querySelector('[x-data*="showModal"]');
                     if (modal) {
                         const isVisible = modal.style.display !== 'none' && !modal.hasAttribute('x-cloak');
-                        if (isVisible && !isInitialized) {
+                        if (isVisible && !window.activityQuill.initialized) {
                             setTimeout(initQuill, 300);
                         } else if (!isVisible && isInitialized) {
                             destroyQuill();
@@ -520,13 +572,24 @@
                 }, 500);
             });
 
-            // Also initialize on Livewire updates
+            // Initialize / sync on Livewire updates (e.g. when opening Edit)
             document.addEventListener('livewire:init', () => {
                 Livewire.hook('morph.updated', () => {
                     setTimeout(() => {
                         const editorElement = document.getElementById('description-editor');
-                        if (editorElement && editorElement.offsetParent !== null && !isInitialized) {
-                            initQuill();
+                        const hiddenInput = document.getElementById('description-hidden');
+                        const qi = window.activityQuill.instance;
+
+                        if (editorElement && editorElement.offsetParent !== null) {
+                            // First time: initialize Quill
+                            if (!window.activityQuill.initialized) {
+                                initQuill();
+                            }
+
+                            // After init, always sync from hidden textarea (Livewire formData.description)
+                            if (window.activityQuill.initialized && qi && hiddenInput) {
+                                qi.root.innerHTML = hiddenInput.value || '';
+                            }
                         }
                     }, 100);
                 });

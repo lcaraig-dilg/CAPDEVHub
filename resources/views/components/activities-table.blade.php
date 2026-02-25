@@ -91,9 +91,6 @@ new class extends Component
         $this->editingActivityId = $activityId;
         $this->bannerImagePreview = $activity->banner_image ? asset('storage/' . $activity->banner_image) : null;
         $this->showModal = true;
-        
-        // Dispatch event to load editor content
-        $this->dispatch('load-editor-content', content: $this->formData['description']);
     }
 
     public function openDetailsModal($activityId)
@@ -251,6 +248,7 @@ new class extends Component
     public function getQrCode($link)
     {
         $fullUrl = url('/register/' . $link);
+        // Use default SVG output (no Imagick dependency)
         return QrCode::size(200)->generate($fullUrl);
     }
 
