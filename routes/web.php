@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Admin panel sections (placeholders for now)
+    // Admin panel sections
     Route::view('/activities', 'activities.index')->name('activities.index');
     Route::view('/pre-post-tests', 'prepost.index')->name('prepost.index');
     Route::view('/materials-repository', 'materials.index')->name('materials.index');
