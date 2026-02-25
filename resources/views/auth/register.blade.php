@@ -372,7 +372,25 @@
 
         <!-- Account Security Section -->
         <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Security</h3>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+
+            <div class="mt-4">
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                    Username
+                </label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    value="{{ old('username') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('username') border-red-500 @enderror"
+                    placeholder="Leave blank to auto-generate from email"
+                >
+                @error('username')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate from your email address</p>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

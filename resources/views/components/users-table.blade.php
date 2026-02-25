@@ -13,6 +13,9 @@ new class extends Component
     public $searchField = 'all'; // all, email, username, name, office, lgu_organization
     public $showModal = false;
     public $editingUserId = null;
+    public $isSubmitting = false;
+    public $selectedUsers = [];
+    public $selectAll = false;
     public $formData = [
         'first_name' => '',
         'middle_initial' => '',
@@ -157,78 +160,96 @@ new class extends Component
         $this->resetValidation();
     }
 
-    public function updatedFormDataDateOfBirth()
+    /**
+     * Generic Livewire updated hook to react to field changes.
+     */
+    public function updated(string $name, mixed $value): void
     {
-        if (!empty($this->formData['date_of_birth'])) {
-            $dob = new \DateTime($this->formData['date_of_birth']);
-            $today = new \DateTime();
-            $age = $today->diff($dob)->y;
-            $this->formData['age'] = $age;
+        // Auto-compute age when date of birth changes
+        if ($name === 'formData.date_of_birth' && !empty($value)) {
+            try {
+                $dob = new \DateTime($value);
+                $today = new \DateTime();
+                $this->formData['age'] = $today->diff($dob)->y;
+            } catch (\Exception $e) {
+                // Ignore invalid dates; validation will catch them
+            }
         }
     }
 
     public function save()
     {
-        $this->validate();
+        $this->isSubmitting = true;
+        
+        try {
+            $this->validate();
 
-        // Calculate age if not set
-        if (empty($this->formData['age']) && !empty($this->formData['date_of_birth'])) {
-            $dob = new \DateTime($this->formData['date_of_birth']);
-            $today = new \DateTime();
-            $this->formData['age'] = $today->diff($dob)->y;
-        }
+            // Calculate age if not set
+            if (empty($this->formData['age']) && !empty($this->formData['date_of_birth'])) {
+                $dob = new \DateTime($this->formData['date_of_birth']);
+                $today = new \DateTime();
+                $this->formData['age'] = $today->diff($dob)->y;
+            }
 
-        // Construct name: FirstName MiddleInitial. LastName Suffix
-        $name = trim($this->formData['first_name']);
-        if (!empty($this->formData['middle_initial'])) {
-            $name .= ' ' . strtoupper($this->formData['middle_initial']) . '.';
-        }
-        $name .= ' ' . $this->formData['last_name'];
-        if (!empty($this->formData['suffix'])) {
-            $name .= ' ' . $this->formData['suffix'];
-        }
-        $name = trim($name);
+            // Construct name: FirstName MiddleInitial. LastName Suffix
+            $name = trim($this->formData['first_name']);
+            if (!empty($this->formData['middle_initial'])) {
+                $name .= ' ' . strtoupper($this->formData['middle_initial']) . '.';
+            }
+            $name .= ' ' . $this->formData['last_name'];
+            if (!empty($this->formData['suffix'])) {
+                $name .= ' ' . $this->formData['suffix'];
+            }
+            $name = trim($name);
 
-        $userData = [
-            'first_name' => $this->formData['first_name'],
-            'middle_initial' => !empty($this->formData['middle_initial']) ? strtoupper($this->formData['middle_initial']) : null,
-            'last_name' => $this->formData['last_name'],
-            'suffix' => $this->formData['suffix'] ?? null,
-            'gender' => $this->formData['gender'],
-            'date_of_birth' => $this->formData['date_of_birth'],
-            'age' => $this->formData['age'],
-            'is_pwd' => $this->formData['is_pwd'] == '1',
-            'requires_assistance' => $this->formData['is_pwd'] == '1' ? ($this->formData['requires_assistance'] == '1') : null,
-            'office' => $this->formData['office'],
-            'position' => $this->formData['position'],
-            'lgu_organization' => $this->formData['lgu_organization'],
-            'contact_number' => $this->formData['contact_number'],
-            'email' => $this->formData['email'],
-            'username' => $this->formData['username'] ?? null,
-            'dietary_restrictions' => $this->formData['dietary_restrictions'] ?? null,
-            'role' => $this->formData['role'],
-            'name' => $name,
-        ];
+            $userData = [
+                'first_name' => $this->formData['first_name'],
+                'middle_initial' => !empty($this->formData['middle_initial']) ? strtoupper($this->formData['middle_initial']) : null,
+                'last_name' => $this->formData['last_name'],
+                'suffix' => $this->formData['suffix'] ?? null,
+                'gender' => $this->formData['gender'],
+                'date_of_birth' => $this->formData['date_of_birth'],
+                'age' => $this->formData['age'],
+                'is_pwd' => $this->formData['is_pwd'] == '1',
+                'requires_assistance' => $this->formData['is_pwd'] == '1' ? ($this->formData['requires_assistance'] == '1') : null,
+                'office' => $this->formData['office'],
+                'position' => $this->formData['position'],
+                'lgu_organization' => $this->formData['lgu_organization'],
+                'contact_number' => $this->formData['contact_number'],
+                'email' => $this->formData['email'],
+                'username' => $this->formData['username'] ?? null,
+                'dietary_restrictions' => $this->formData['dietary_restrictions'] ?? null,
+                'role' => $this->formData['role'],
+                'name' => $name,
+            ];
 
-        if ($this->editingUserId) {
-            $user = User::findOrFail($this->editingUserId);
-            // Only update password if provided
-            if (!empty($this->formData['password'])) {
+            if ($this->editingUserId) {
+                $user = User::findOrFail($this->editingUserId);
+                // Only update password if provided
+                if (!empty($this->formData['password'])) {
+                    $userData['password'] = $this->formData['password'];
+                }
+                $user->update($userData);
+                session()->flash('success', 'User updated successfully.');
+            } else {
+                // Generate username from email if not provided
+                if (empty($this->formData['username'])) {
+                    $userData['username'] = explode('@', $this->formData['email'])[0];
+                }
                 $userData['password'] = $this->formData['password'];
+                User::create($userData);
+                session()->flash('success', 'User created successfully.');
             }
-            $user->update($userData);
-            session()->flash('success', 'User updated successfully.');
-        } else {
-            // Generate username from email if not provided
-            if (empty($this->formData['username'])) {
-                $userData['username'] = explode('@', $this->formData['email'])[0];
-            }
-            $userData['password'] = $this->formData['password'];
-            User::create($userData);
-            session()->flash('success', 'User created successfully.');
-        }
 
-        $this->closeModal();
+            $this->isSubmitting = false;
+            $this->closeModal();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->isSubmitting = false;
+            throw $e;
+        } catch (\Exception $e) {
+            $this->isSubmitting = false;
+            session()->flash('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 
     public function delete($userId)
@@ -249,9 +270,73 @@ new class extends Component
 
         $user->delete();
         session()->flash('success', 'User deleted successfully.');
+        $this->selectedUsers = [];
     }
 
-    public function render()
+    public function updatedSelectAll($value)
+    {
+        $users = $this->getUsersQuery()->paginate(10);
+        $currentPageIds = $users->pluck('id')->toArray();
+        
+        if ($value) {
+            // Merge with existing selections to keep selections from other pages
+            $this->selectedUsers = array_unique(array_merge($this->selectedUsers, $currentPageIds));
+        } else {
+            // Deselect all users on current page
+            $this->selectedUsers = array_values(array_diff($this->selectedUsers, $currentPageIds));
+        }
+    }
+
+    public function updatedSelectedUsers()
+    {
+        // Auto-update selectAll when individual checkboxes change
+        $users = $this->getUsersQuery()->paginate(10);
+        $currentPageIds = $users->pluck('id')->toArray();
+        $selectedOnPage = array_intersect($this->selectedUsers, $currentPageIds);
+        $this->selectAll = !empty($currentPageIds) && count($selectedOnPage) === count($currentPageIds);
+    }
+
+    public function batchDelete()
+    {
+        if (empty($this->selectedUsers)) {
+            session()->flash('error', 'Please select at least one user to delete.');
+            return;
+        }
+
+        $users = User::whereIn('id', $this->selectedUsers)->get();
+        $deletedCount = 0;
+        $errors = [];
+
+        foreach ($users as $user) {
+            // Prevent deleting super admin
+            if ($user->role === 'super_admin') {
+                $errors[] = "Cannot delete super admin user: {$user->email}";
+                continue;
+            }
+
+            // Prevent deleting yourself
+            if ($user->id === auth()->id()) {
+                $errors[] = "Cannot delete your own account.";
+                continue;
+            }
+
+            $user->delete();
+            $deletedCount++;
+        }
+
+        if ($deletedCount > 0) {
+            session()->flash('success', "Successfully deleted {$deletedCount} user(s).");
+        }
+
+        if (!empty($errors)) {
+            session()->flash('error', implode(' ', $errors));
+        }
+
+        $this->selectedUsers = [];
+        $this->selectAll = false;
+    }
+
+    protected function getUsersQuery()
     {
         $query = User::query();
 
@@ -292,7 +377,15 @@ new class extends Component
             }
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Sort by role (super_admin > admin > user) then by newest creation date
+        return $query
+            ->orderByRaw("CASE WHEN role = 'super_admin' THEN 1 WHEN role = 'admin' THEN 2 ELSE 3 END")
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function render()
+    {
+        $users = $this->getUsersQuery()->paginate(10);
 
         return view('livewire.users-table', [
             'users' => $users,

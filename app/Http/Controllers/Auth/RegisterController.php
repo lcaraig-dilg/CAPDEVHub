@@ -84,6 +84,7 @@ class RegisterController extends Controller
             'lgu_organization' => ['required', 'string', 'max:255'],
             'contact_number' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-() ]+$/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'username' => ['nullable', 'string', 'max:255', 'unique:users'],
             'dietary_restrictions' => ['nullable', 'string', 'max:500'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
@@ -126,8 +127,10 @@ class RegisterController extends Controller
         $dateOfBirth = Carbon::parse($request->date_of_birth);
         $age = $dateOfBirth->age;
 
-        // Generate username from email (before @ symbol)
-        $username = explode('@', $request->email)[0];
+        // Use provided username or generate from email (before @ symbol)
+        $username = $request->filled('username') 
+            ? $request->input('username') 
+            : explode('@', $request->email)[0];
 
         // Create user with all fields
         // Note: password will be automatically hashed by Laravel's 'hashed' cast
