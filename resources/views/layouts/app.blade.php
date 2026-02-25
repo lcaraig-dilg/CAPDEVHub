@@ -27,50 +27,234 @@
                 </a>
             </div>
 
-            <nav class="flex-1 p-4 space-y-1 text-sm">
-                <a href="{{ route('dashboard') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Dashboard</span>
-                </a>
+            <nav class="flex-1 p-4 space-y-1 text-sm" x-data="{ adminOpen: true, pagesOpen: true }">
+                @php
+                    $user = auth()->user();
+                    $role = $user->role ?? 'user';
+                @endphp
 
-                <a href="{{ route('activities.index') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Activities</span>
-                </a>
+                {{-- Super Admin Menu Items --}}
+                @if($role === 'super_admin')
+                    {{-- Admin Dropdown --}}
+                    <div>
+                        <button @click="adminOpen = !adminOpen"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-md transition text-gray-800 hover:bg-gray-200 font-semibold">
+                            <span>Admin</span>
+                            <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': adminOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="adminOpen" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="ml-4 mt-1 space-y-1">
+                            <a href="{{ route('dashboard') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Dashboard</span>
+                            </a>
 
-                <a href="{{ route('prepost.index') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('prepost.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Pre &amp; Post Tests</span>
-                </a>
+                            <a href="{{ route('activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Activities</span>
+                            </a>
 
-                <a href="{{ route('materials.index') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Materials Repository</span>
-                </a>
+                            <a href="{{ route('prepost.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('prepost.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Pre &amp; Post Tests</span>
+                            </a>
 
-                <a href="{{ route('quiz.index') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('quiz.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Quiz</span>
-                </a>
+                            <a href="{{ route('program-of-activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Program of Activities</span>
+                            </a>
 
-                <a href="{{ route('certificates.index') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>Certificate of Attendance Generator</span>
-                </a>
+                            <a href="{{ route('materials.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Materials Repository</span>
+                            </a>
 
-                <hr class="my-4 border-gray-300">
+                            <a href="{{ route('quiz.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('quiz.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Quiz</span>
+                            </a>
 
-                <a href="{{ route('profile.show') }}"
-                   class="flex items-center px-3 py-2 rounded-md transition
-                          {{ request()->routeIs('profile.*') ? 'bg-gray-200 text-gray-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                    <span>My Profile</span>
-                </a>
+                            <a href="{{ route('certificates.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Certificate of Attendance Generator</span>
+                            </a>
+
+                            <a href="{{ route('users.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('users.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Users</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Admin Menu Items --}}
+                @if($role === 'admin')
+                    {{-- Admin Dropdown --}}
+                    <div>
+                        <button @click="adminOpen = !adminOpen"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-md transition text-gray-800 hover:bg-gray-200 font-semibold">
+                            <span>Admin</span>
+                            <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': adminOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="adminOpen" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="ml-4 mt-1 space-y-1">
+                            <a href="{{ route('dashboard') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Dashboard</span>
+                            </a>
+
+                            <a href="{{ route('activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Activities</span>
+                            </a>
+
+                            <a href="{{ route('prepost.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('prepost.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Pre &amp; Post Tests</span>
+                            </a>
+
+                            <a href="{{ route('program-of-activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Program of Activities</span>
+                            </a>
+
+                            <a href="{{ route('materials.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Materials Repository</span>
+                            </a>
+
+                            <a href="{{ route('quiz.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('quiz.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Quiz</span>
+                            </a>
+
+                            <a href="{{ route('certificates.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Certificate of Attendance Generator</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Pages Dropdown --}}
+                    <div>
+                        <button @click="pagesOpen = !pagesOpen"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-md transition text-gray-800 hover:bg-gray-200 font-semibold">
+                            <span>Pages</span>
+                            <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': pagesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="pagesOpen"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="ml-4 mt-1 space-y-1">
+                            <a href="{{ route('my-activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('my-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Activities</span>
+                            </a>
+
+                            <a href="{{ route('profile.show') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('profile.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Profile</span>
+                            </a>
+
+                            <a href="{{ route('my-certificates.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('my-certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Certificates</span>
+                            </a>
+
+                            <a href="{{ route('materials.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Materials Repository</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- User Menu Items --}}
+                @if($role === 'user')
+                    {{-- Pages Dropdown --}}
+                    <div>
+                        <button @click="pagesOpen = !pagesOpen"
+                                class="w-full flex items-center justify-between px-3 py-2 rounded-md transition text-gray-800 hover:bg-gray-200 font-semibold">
+                            <span>Pages</span>
+                            <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': pagesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="pagesOpen"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="ml-4 mt-1 space-y-1">
+                            <a href="{{ route('my-activities.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('my-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Activities</span>
+                            </a>
+
+                            <a href="{{ route('profile.show') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('profile.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Profile</span>
+                            </a>
+
+                            <a href="{{ route('my-certificates.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('my-certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>My Certificates</span>
+                            </a>
+
+                            <a href="{{ route('materials.index') }}"
+                               class="flex items-center px-3 py-2 rounded-md transition
+                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                <span>Materials Repository</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </nav>
 
             <div class="p-4 border-t border-gray-200 text-xs text-gray-500 bg-white">
@@ -129,6 +313,7 @@
             </main>
         </div>
     </div>
+    @livewireScripts
 </body>
 </html>
 

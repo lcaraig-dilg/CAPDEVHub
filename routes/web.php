@@ -36,4 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::view('/materials-repository', 'materials.index')->name('materials.index');
     Route::view('/quiz', 'quiz.index')->name('quiz.index');
     Route::view('/certificate-of-attendance', 'certificates.index')->name('certificates.index');
+    
+    // Additional routes for role-based menus
+    Route::view('/program-of-activities', 'program-of-activities.index')->name('program-of-activities.index');
+    
+    // Users management - Super Admin only
+    Route::middleware('super_admin')->group(function () {
+        Route::view('/users', 'users.index')->name('users.index');
+    });
+    
+    Route::view('/my-activities', 'my-activities.index')->name('my-activities.index');
+    Route::view('/my-certificates', 'my-certificates.index')->name('my-certificates.index');
 });
