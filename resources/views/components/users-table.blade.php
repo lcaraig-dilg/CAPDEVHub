@@ -14,6 +14,8 @@ new class extends Component
     public $showModal = false;
     public $editingUserId = null;
     public $isSubmitting = false;
+    public $selectedUsers = [];
+    public $selectAll = false;
     public $formData = [
         'first_name' => '',
         'middle_initial' => '',
@@ -268,9 +270,73 @@ new class extends Component
 
         $user->delete();
         session()->flash('success', 'User deleted successfully.');
+        $this->selectedUsers = [];
     }
 
-    public function render()
+    public function updatedSelectAll($value)
+    {
+        $users = $this->getUsersQuery()->paginate(10);
+        $currentPageIds = $users->pluck('id')->toArray();
+        
+        if ($value) {
+            // Merge with existing selections to keep selections from other pages
+            $this->selectedUsers = array_unique(array_merge($this->selectedUsers, $currentPageIds));
+        } else {
+            // Deselect all users on current page
+            $this->selectedUsers = array_values(array_diff($this->selectedUsers, $currentPageIds));
+        }
+    }
+
+    public function updatedSelectedUsers()
+    {
+        // Auto-update selectAll when individual checkboxes change
+        $users = $this->getUsersQuery()->paginate(10);
+        $currentPageIds = $users->pluck('id')->toArray();
+        $selectedOnPage = array_intersect($this->selectedUsers, $currentPageIds);
+        $this->selectAll = !empty($currentPageIds) && count($selectedOnPage) === count($currentPageIds);
+    }
+
+    public function batchDelete()
+    {
+        if (empty($this->selectedUsers)) {
+            session()->flash('error', 'Please select at least one user to delete.');
+            return;
+        }
+
+        $users = User::whereIn('id', $this->selectedUsers)->get();
+        $deletedCount = 0;
+        $errors = [];
+
+        foreach ($users as $user) {
+            // Prevent deleting super admin
+            if ($user->role === 'super_admin') {
+                $errors[] = "Cannot delete super admin user: {$user->email}";
+                continue;
+            }
+
+            // Prevent deleting yourself
+            if ($user->id === auth()->id()) {
+                $errors[] = "Cannot delete your own account.";
+                continue;
+            }
+
+            $user->delete();
+            $deletedCount++;
+        }
+
+        if ($deletedCount > 0) {
+            session()->flash('success', "Successfully deleted {$deletedCount} user(s).");
+        }
+
+        if (!empty($errors)) {
+            session()->flash('error', implode(' ', $errors));
+        }
+
+        $this->selectedUsers = [];
+        $this->selectAll = false;
+    }
+
+    protected function getUsersQuery()
     {
         $query = User::query();
 
@@ -311,7 +377,15 @@ new class extends Component
             }
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+        // Sort by role (super_admin > admin > user) then by newest creation date
+        return $query
+            ->orderByRaw("CASE WHEN role = 'super_admin' THEN 1 WHEN role = 'admin' THEN 2 ELSE 3 END")
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function render()
+    {
+        $users = $this->getUsersQuery()->paginate(10);
 
         return view('livewire.users-table', [
             'users' => $users,

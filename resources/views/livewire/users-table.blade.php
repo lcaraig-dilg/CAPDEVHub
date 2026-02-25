@@ -1,31 +1,59 @@
-<div>
+<div class="bg-gray-100 rounded-lg p-6 transition-all duration-300">
     {{-- Success Message --}}
     @if (session()->has('success'))
-        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+        <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative transition-all duration-300 animate-fade-in" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
         </div>
     @endif
 
     {{-- Error Message --}}
     @if (session()->has('error'))
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative transition-all duration-300 animate-fade-in" role="alert">
             <span class="block sm:inline">{{ session('error') }}</span>
         </div>
     @endif
 
-    {{-- Header with Create Button --}}
+    {{-- Header with Create Button and Batch Delete --}}
     <div class="mb-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-900">Users Management</h1>
-        <button 
-            wire:click="openCreateModal"
-            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition font-medium"
-        >
-            + Add New User
-        </button>
+        <h1 class="text-2xl font-bold">Users Management</h1>
+        <div class="flex gap-3">
+            <div
+                x-data
+                x-show="$wire.selectedUsers.length > 0"
+                x-cloak
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform translate-x-4 scale-95"
+                x-transition:enter-end="opacity-100 transform translate-x-0 scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform translate-x-0 scale-100"
+                x-transition:leave-end="opacity-0 transform translate-x-4 scale-95"
+                style="display: none;"
+            >
+                <button 
+                    wire:click="batchDelete"
+                    wire:confirm="Are you sure you want to delete {{ count($selectedUsers) }} selected user(s)?"
+                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all duration-200 font-medium flex items-center gap-2 shadow-lg"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Delete Selected ({{ count($selectedUsers) }})
+                </button>
+            </div>
+            <button 
+                wire:click="openCreateModal"
+                class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-[#0a7ba1] transition-all duration-200 font-medium flex items-center gap-2"
+            >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add New User
+            </button>
+        </div>
     </div>
 
     {{-- Search and Filter Section --}}
-    <div class="bg-white shadow rounded-lg p-4 mb-6">
+    <div class="bg-gray-50 shadow rounded-lg p-4 mb-6 transition-all duration-300">
         <label class="block text-sm font-medium text-gray-700 mb-3">Filter By:</label>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
@@ -33,13 +61,13 @@
                     type="text" 
                     wire:model.live.debounce.300ms="search"
                     placeholder="Search users..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 >
             </div>
             <div>
                 <select 
                     wire:model.live="searchField"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 >
                     <option value="all">All Fields</option>
                     <option value="email">Email</option>
@@ -53,23 +81,38 @@
     </div>
 
     {{-- Users Table --}}
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-gray-50 shadow rounded-lg overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-blue-900">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LGU Organization</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                            <input 
+                                type="checkbox" 
+                                wire:model.live="selectAll"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            >
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Username</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Office</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">LGU Organization</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-gray-50 divide-y divide-gray-200">
                     @forelse ($users as $user)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-100 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input 
+                                    type="checkbox" 
+                                    wire:model.live="selectedUsers"
+                                    value="{{ $user->id }}"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                >
+                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $user->full_name }}
                             </td>
@@ -95,26 +138,34 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button 
-                                    wire:click="openEditModal({{ $user->id }})"
-                                    class="text-blue-600 hover:text-blue-900 mr-3"
-                                >
-                                    Edit
-                                </button>
-                                @if ($user->role !== 'super_admin' && $user->id !== auth()->id())
+                                <div class="flex justify-end gap-2">
                                     <button 
-                                        wire:click="delete({{ $user->id }})"
-                                        wire:confirm="Are you sure you want to delete this user?"
-                                        class="text-red-600 hover:text-red-900"
+                                        wire:click="openEditModal({{ $user->id }})"
+                                        class="text-blue-600 hover:text-blue-900 transition-colors duration-200 p-1 rounded hover:bg-blue-50"
+                                        title="Edit User"
                                     >
-                                        Delete
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
                                     </button>
-                                @endif
+                                    @if ($user->role !== 'super_admin' && $user->id !== auth()->id())
+                                        <button 
+                                            wire:click="delete({{ $user->id }})"
+                                            wire:confirm="Are you sure you want to delete this user?"
+                                            class="text-red-600 hover:text-red-900 transition-colors duration-200 p-1 rounded hover:bg-red-50"
+                                            title="Delete User"
+                                        >
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
+                            <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">
                                 No users found.
                             </td>
                         </tr>
@@ -124,20 +175,43 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="px-6 py-4 border-t border-gray-200">
+        <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
             {{ $users->links() }}
         </div>
     </div>
 
     {{-- Create/Edit Modal --}}
-    @if ($showModal)
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" wire:click="closeModal">
-            <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-lg rounded-md bg-white max-h-[90vh]" wire:click.stop>
+    <div 
+        x-data="{ show: @entangle('showModal') }"
+        x-show="show"
+        x-cloak
+        class="fixed inset-0 overflow-y-auto h-full w-full z-50"
+        style="display: none; background-color: rgba(0, 0, 0, 0.25); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+    >
+        <div 
+            class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-2xl rounded-lg bg-white max-h-[90vh] transform"
+            wire:click.stop
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+            x-transition:leave-end="opacity-0 translate-y-8 scale-95"
+        >
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-900">
                         {{ $editingUserId ? 'Edit User' : 'Create New User' }}
                     </h3>
-                    <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
+                    <button 
+                        wire:click="closeModal" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded hover:bg-gray-100"
+                    >
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -425,21 +499,33 @@
                             wire:click="closeModal"
                             wire:loading.attr="disabled"
                             wire:target="save"
-                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
                             Cancel
                         </button>
                         <button 
                             type="submit"
                             wire:loading.attr="disabled"
                             wire:target="save"
-                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
                         >
-                            <span wire:loading.remove wire:target="save">
+                            <span wire:loading.remove wire:target="save" class="flex items-center justify-center gap-2">
+                                @if($editingUserId)
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                @else
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                @endif
                                 {{ $editingUserId ? 'Update' : 'Create' }}
                             </span>
-                            <span wire:loading wire:target="save" class="flex items-center">
-                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <span wire:loading wire:target="save" class="flex items-center justify-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -450,5 +536,5 @@
                 </form>
             </div>
         </div>
-    @endif
+    </div>
 </div>
