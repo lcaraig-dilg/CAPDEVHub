@@ -42,7 +42,7 @@
             </div>
             <button 
                 wire:click="openCreateModal"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200 font-medium flex items-center gap-2"
+                class="px-4 py-2 bg-[#013141] text-white rounded-md hover:bg-[#0a7ba1] rounded-md transition-all duration-200 font-medium flex items-center gap-2"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -67,7 +67,7 @@
     <div class="bg-gray-50 shadow rounded-lg overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-blue-500">
+                <thead class="bg-[#013141]">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
                             <input 
@@ -98,7 +98,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <button 
                                     wire:click="openDetailsModal({{ $activity->id }})"
-                                    class="text-blue-600 hover:text-blue-900 hover:underline transition-colors duration-200 font-medium"
+                                    class="text-[#0a7ca1] hover:text-[#013141] hover:underline transition-colors duration-200 font-medium"
                                 >
                                     {{ $activity->title }}
                                 </button>
@@ -113,7 +113,7 @@
                                 {{ $activity->registration_start->format('M d, Y') }} - {{ $activity->registration_end->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{{ url('/register/' . $activity->shareable_link) }}" target="_blank" class="text-blue-600 hover:text-blue-900 hover:underline">
+                                <a href="{{ url('/register/' . $activity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline">
                                     {{ url('/register/' . $activity->shareable_link) }}
                                 </a>
                             </td>
@@ -121,7 +121,7 @@
                                 <div class="flex justify-end gap-2">
                                     <button 
                                         wire:click="openEditModal({{ $activity->id }})"
-                                        class="text-blue-600 hover:text-blue-900 transition-colors duration-200 p-1 rounded hover:bg-blue-50"
+                                        class="text-[#0a7ca1] hover:text-[#013141] transition-colors duration-200 p-1 rounded hover:bg-[#0a7ca1] hover:bg-opacity-10"
                                         title="Edit Activity"
                                     >
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,7 +317,7 @@
                         type="submit"
                         wire:loading.attr="disabled"
                         wire:target="save"
-                        class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
+                            class="px-4 py-2 bg-[#013141] text-white rounded-md hover:bg-[#0a7ca1] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
                     >
                         <span wire:loading.remove wire:target="save" class="flex items-center justify-center gap-2">
                             @if($editingActivityId)
@@ -387,7 +387,7 @@
                         <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
                             <div class="flex-1">
                                 <p class="text-sm text-gray-600 mb-2">Shareable Link:</p>
-                                <a href="{{ url('/register/' . $viewingActivity->shareable_link) }}" target="_blank" class="text-blue-600 hover:text-blue-900 hover:underline break-all">
+                                <a href="{{ url('/register/' . $viewingActivity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
                                     {{ url('/register/' . $viewingActivity->shareable_link) }}
                                 </a>
                             </div>

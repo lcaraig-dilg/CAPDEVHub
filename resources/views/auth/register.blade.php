@@ -67,7 +67,7 @@
                         name="first_name" 
                         value="{{ old('first_name') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('first_name') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('first_name') border-red-500 @enderror"
                     >
                     @error('first_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -85,7 +85,7 @@
                         value="{{ old('middle_initial') }}"
                         maxlength="1"
                         pattern="[A-Za-z]"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('middle_initial') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('middle_initial') border-red-500 @enderror"
                         style="text-transform: uppercase;"
                     >
                     @error('middle_initial')
@@ -103,7 +103,7 @@
                         name="last_name" 
                         value="{{ old('last_name') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('last_name') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('last_name') border-red-500 @enderror"
                     >
                     @error('last_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -119,7 +119,7 @@
                         id="suffix" 
                         name="suffix" 
                         value="{{ old('suffix') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('suffix') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('suffix') border-red-500 @enderror"
                         placeholder="Jr., Sr., III, etc."
                     >
                     @error('suffix')
@@ -137,7 +137,7 @@
                         id="gender" 
                         name="gender" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('gender') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('gender') border-red-500 @enderror"
                     >
                         <option value="">Select Gender</option>
                         <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
@@ -161,7 +161,7 @@
                         required 
                         max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                         min="1900-01-01"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('date_of_birth') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('date_of_birth') border-red-500 @enderror"
                     >
                     @error('date_of_birth')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -198,7 +198,7 @@
                             name="is_pwd" 
                             value="1" 
                             {{ old('is_pwd') == '1' ? 'checked' : '' }}
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
                             onchange="toggleAssistanceField()"
                         >
                         <span class="ml-2 text-sm text-gray-700">Yes</span>
@@ -209,7 +209,7 @@
                             name="is_pwd" 
                             value="0" 
                             {{ old('is_pwd', '0') == '0' ? 'checked' : '' }}
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
                             onchange="toggleAssistanceField()"
                         >
                         <span class="ml-2 text-sm text-gray-700">No</span>
@@ -231,7 +231,7 @@
                             name="requires_assistance" 
                             value="1" 
                             {{ old('requires_assistance') == '1' ? 'checked' : '' }}
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
                         >
                         <span class="ml-2 text-sm text-gray-700">Yes</span>
                     </label>
@@ -241,7 +241,7 @@
                             name="requires_assistance" 
                             value="0" 
                             {{ old('requires_assistance') == '0' ? 'checked' : '' }}
-                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
                         >
                         <span class="ml-2 text-sm text-gray-700">No</span>
                     </label>
@@ -267,7 +267,7 @@
                         name="office" 
                         value="{{ old('office') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('office') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('office') border-red-500 @enderror"
                     >
                     @error('office')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -284,7 +284,7 @@
                         name="position" 
                         value="{{ old('position') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('position') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('position') border-red-500 @enderror"
                     >
                     @error('position')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -301,7 +301,7 @@
                         name="lgu_organization" 
                         value="{{ old('lgu_organization') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('lgu_organization') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('lgu_organization') border-red-500 @enderror"
                     >
                     @error('lgu_organization')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -326,7 +326,7 @@
                         value="{{ old('contact_number') }}"
                         required 
                         pattern="[0-9+\-() ]+"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('contact_number') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('contact_number') border-red-500 @enderror"
                         placeholder="09XX XXX XXXX"
                     >
                     @error('contact_number')
@@ -344,7 +344,7 @@
                         name="email" 
                         value="{{ old('email') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('email') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
                         placeholder="your.email@example.com"
                     >
                     @error('email')
@@ -361,7 +361,7 @@
                     id="dietary_restrictions" 
                     name="dietary_restrictions" 
                     rows="3"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('dietary_restrictions') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('dietary_restrictions') border-red-500 @enderror"
                     placeholder="Please specify any dietary restrictions or allergies"
                 >{{ old('dietary_restrictions') }}</textarea>
                 @error('dietary_restrictions')
@@ -383,7 +383,7 @@
                     id="username" 
                     name="username" 
                     value="{{ old('username') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('username') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('username') border-red-500 @enderror"
                     placeholder="Leave blank to auto-generate from email"
                 >
                 @error('username')
@@ -403,7 +403,7 @@
                         name="password" 
                         required 
                         minlength="8"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('password') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
                         placeholder="Minimum 8 characters"
                     >
                     @error('password')
@@ -422,7 +422,7 @@
                         name="password_confirmation" 
                         required 
                         minlength="8"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1]"
                     >
                 </div>
             </div>
@@ -431,7 +431,7 @@
         <div>
             <button 
                 type="submit" 
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#013141] hover:bg-[#0a7ca1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a7ca1] transition duration-150"
             >
                 Register Account
             </button>
@@ -440,7 +440,7 @@
         <div class="text-center">
             <p class="text-sm text-gray-600">
                 Already have an account? 
-                <a href="{{ route('login') }}" class="font-medium text-blue-900 hover:text-blue-800">
+                <a href="{{ route('login') }}" class="font-medium text-[#013141] hover:text-[#0a7ca1]">
                     Sign in here
                 </a>
             </p>

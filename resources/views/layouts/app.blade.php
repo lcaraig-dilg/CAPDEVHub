@@ -54,49 +54,49 @@
                              class="ml-4 mt-1 space-y-1">
                             <a href="{{ route('dashboard') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('dashboard') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Dashboard</span>
                             </a>
 
                             <a href="{{ route('activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Activities</span>
                             </a>
 
                             <a href="{{ route('prepost.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('prepost.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('prepost.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Pre &amp; Post Tests</span>
                             </a>
 
                             <a href="{{ route('program-of-activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Program of Activities</span>
                             </a>
 
                             <a href="{{ route('materials.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('materials.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Materials Repository</span>
                             </a>
 
                             <a href="{{ route('quiz.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('quiz.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('quiz.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Quiz</span>
                             </a>
 
                             <a href="{{ route('certificates.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Certificate of Attendance Generator</span>
                             </a>
 
                             <a href="{{ route('users.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('users.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('users.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Users</span>
                             </a>
                         </div>
@@ -124,43 +124,43 @@
                              class="ml-4 mt-1 space-y-1">
                             <a href="{{ route('dashboard') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('dashboard') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Dashboard</span>
                             </a>
 
                             <a href="{{ route('activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Activities</span>
                             </a>
 
                             <a href="{{ route('prepost.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('prepost.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('prepost.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Pre &amp; Post Tests</span>
                             </a>
 
                             <a href="{{ route('program-of-activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('program-of-activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Program of Activities</span>
                             </a>
 
                             <a href="{{ route('materials.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('materials.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Materials Repository</span>
                             </a>
 
                             <a href="{{ route('quiz.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('quiz.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('quiz.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Quiz</span>
                             </a>
 
                             <a href="{{ route('certificates.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Certificate of Attendance Generator</span>
                             </a>
                         </div>
@@ -185,25 +185,25 @@
                              class="ml-4 mt-1 space-y-1">
                             <a href="{{ route('my-activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('my-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('my-activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Activities</span>
                             </a>
 
                             <a href="{{ route('profile.show') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('profile.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('profile.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Profile</span>
                             </a>
 
                             <a href="{{ route('my-certificates.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('my-certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('my-certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Certificates</span>
                             </a>
 
                             <a href="{{ route('materials.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('materials.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Materials Repository</span>
                             </a>
                         </div>
@@ -231,25 +231,25 @@
                              class="ml-4 mt-1 space-y-1">
                             <a href="{{ route('my-activities.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('my-activities.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('my-activities.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Activities</span>
                             </a>
 
                             <a href="{{ route('profile.show') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('profile.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('profile.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Profile</span>
                             </a>
 
                             <a href="{{ route('my-certificates.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('my-certificates.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('my-certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>My Certificates</span>
                             </a>
 
                             <a href="{{ route('materials.index') }}"
                                class="flex items-center px-3 py-2 rounded-md transition
-                                      {{ request()->routeIs('materials.*') ? 'bg-blue-100 text-blue-900 font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
+                                      {{ request()->routeIs('materials.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
                                 <span>Materials Repository</span>
                             </a>
                         </div>
@@ -262,7 +262,7 @@
                     @csrf
                     <button
                         type="submit"
-                        class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md bg-blue-900 hover:bg-blue-800 text-sm font-medium text-white transition"
+                        class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md bg-[#013141] hover:bg-[#0a7ca1] text-sm font-medium text-white transition"
                     >
                         Logout
                     </button>
@@ -273,7 +273,10 @@
         <!-- Main area -->
         <div class="flex-1 flex flex-col">
             <!-- Top bar -->
-            <header class="h-16 bg-blue-900 text-white shadow-md flex items-center justify-between px-6">
+            <header
+                class="h-16 text-white shadow-md flex items-center justify-between px-6"
+                style="background: linear-gradient(to right, #0a7ba1, #013141);"
+            >
                 <div class="text-sm font-medium">
                     @yield('page-title')
                 </div>

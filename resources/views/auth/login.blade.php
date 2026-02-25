@@ -23,7 +23,7 @@
                 value="{{ old('email') }}"
                 required 
                 autofocus
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('email') border-red-500 @enderror"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
                 placeholder="Enter your email or username"
             >
             @error('email')
@@ -40,7 +40,7 @@
                 id="password" 
                 name="password" 
                 required
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('password') border-red-500 @enderror"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
                 placeholder="Enter your password"
             >
             @error('password')
@@ -54,7 +54,7 @@
                     id="remember" 
                     name="remember" 
                     type="checkbox" 
-                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300 rounded"
                 >
                 <label for="remember" class="ml-2 block text-sm text-gray-700">
                     Remember me
@@ -65,7 +65,7 @@
         <div>
             <button 
                 type="submit" 
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#013141] hover:bg-[#0a7ca1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a7ca1] transition duration-150"
             >
                 Sign In
             </button>
@@ -74,7 +74,7 @@
         <div class="text-center">
             <p class="text-sm text-gray-600">
                 Don't have an account? 
-                <a href="{{ route('register') }}" class="font-medium text-blue-900 hover:text-blue-800">
+                <a href="{{ route('register') }}" class="font-medium text-[#013141] hover:text-[#0a7ca1]">
                     Register here
                 </a>
             </p>
