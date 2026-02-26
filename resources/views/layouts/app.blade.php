@@ -262,7 +262,7 @@
                     @csrf
                     <button
                         type="submit"
-                        class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md bg-[#013141] hover:bg-[#0a7ca1] text-sm font-medium text-white transition"
+                        class="w-full inline-flex items-center justify-center px-3 py-2 rounded-md bg-[#FAB95B] hover:bg-[#F9A84D] text-sm font-medium text-white transition"
                     >
                         Logout
                     </button>

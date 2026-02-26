@@ -22,7 +22,7 @@
     <div class="mt-6">
         <a 
             href="{{ route('profile.show') }}" 
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#013141] hover:bg-[#0a7ca1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a7ca1] transition"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#FAB95B] hover:bg-[#F9A84D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FAB95B] transition"
         >
             View My Information
         </a>

@@ -42,7 +42,7 @@
             </div>
             <button 
                 wire:click="openCreateModal"
-                class="px-4 py-2 bg-[#013141] text-white rounded-md hover:bg-[#0a7ca1] transition-all duration-200 font-medium flex items-center gap-2"
+                class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-all duration-200 font-medium flex items-center gap-2"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -510,7 +510,7 @@
                             type="submit"
                             wire:loading.attr="disabled"
                             wire:target="save"
-                            class="px-4 py-2 bg-[#013141] text-white rounded-md hover:bg-[#0a7ca1] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
+                            class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
                         >
                             <span wire:loading.remove wire:target="save" class="flex items-center justify-center gap-2">
                                 @if($editingUserId)

@@ -431,7 +431,7 @@
         <div>
             <button 
                 type="submit" 
-                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#013141] hover:bg-[#0a7ca1] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a7ca1] transition duration-150"
+                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#FAB95B] hover:bg-[#F9A84D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FAB95B] transition duration-150"
             >
                 Register Account
             </button>

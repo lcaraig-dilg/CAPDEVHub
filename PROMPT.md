@@ -78,6 +78,20 @@ php artisan make:livewire ComponentName
 - Frontend JS: `resources/js/app.js`
 - Frontend CSS: `resources/css/app.css`
 
+## Color Palette
+The website uses a specific color palette that must be followed:
+
+- **`#013141`** - Dark accent color (used for headers, dark backgrounds, table headers, etc.)
+- **`#0a7ca1`** - Light accent color (used for links, hover states, secondary elements)
+- **`#FAB95B`** - Bold color (used for buttons, important/significant information, call-to-action elements)
+- **`#E8E2DB`** - Empty spaces/backgrounds (used for empty areas, light backgrounds instead of pure white)
+
+**Important Color Guidelines:**
+- Avoid pure white backgrounds (use `#E8E2DB` or similar light colors instead)
+- White text (`text-white`) can be used when the background is dark (e.g., on `#013141` or `#FAB95B`)
+- Buttons should use `#FAB95B` as the primary color with appropriate hover states
+- Use Tailwind's arbitrary value syntax: `bg-[#FAB95B]`, `text-[#013141]`, etc.
+
 ## Before You Code
 1. ✅ Read this prompt
 2. ✅ Understand the existing codebase
