@@ -204,10 +204,18 @@
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
         >
-                <div class="mb-4">
+                <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-900">
                         {{ $editingUserId ? 'Edit User' : 'Create New User' }}
                     </h3>
+                    <button 
+                        wire:click="closeModal" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded hover:bg-gray-100"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
 
                 <form wire:submit.prevent="save">
