@@ -4,11 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EventController;
 
 // Redirect root to login
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Public Event Page (accessible without authentication)
+Route::get('/show/{slug}', [EventController::class, 'show'])->name('events.show');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {

@@ -96,12 +96,13 @@
                                 >
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <button 
-                                    wire:click="openDetailsModal({{ $activity->id }})"
+                                <a 
+                                    href="{{ route('events.show', \Illuminate\Support\Str::slug($activity->title)) }}"
+                                    target="_blank"
                                     class="text-[#0a7ca1] hover:text-[#013141] hover:underline transition-colors duration-200 font-medium"
                                 >
                                     {{ $activity->title }}
-                                </button>
+                                </a>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $activity->venue }}
@@ -122,7 +123,7 @@
                                         "
                                     >
                                         <div class="bg-white p-1 rounded border inline-block hover:border-[#0a7ca1] transition-colors qr-code-container" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                                            {!! $this->getQrCode($activity->shareable_link) !!}
+                                            {!! $this->getQrCode($activity) !!}
                                         </div>
                                         
                                         <!-- Confirmation Modal -->
@@ -190,7 +191,7 @@
                                                                     const pngUrl = URL.createObjectURL(blob);
                                                                     const link = document.createElement('a');
                                                                     link.href = pngUrl;
-                                                                    link.download = 'activity-qr-{{ $activity->shareable_link }}.png';
+                                                                    link.download = 'activity-qr-{{ \Illuminate\Support\Str::slug($activity->title) }}.png';
                                                                     document.body.appendChild(link);
                                                                     link.click();
                                                                     document.body.removeChild(link);
@@ -213,8 +214,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="{{ url('/register/' . $activity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
-                                        {{ url('/register/' . $activity->shareable_link) }}
+                                    <a href="{{ route('events.show', \Illuminate\Support\Str::slug($activity->title)) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
+                                        {{ route('events.show', \Illuminate\Support\Str::slug($activity->title)) }}
                                     </a>
                                 </div>
                             </td>
@@ -323,11 +324,32 @@
                     {{-- Date & Time of Activity --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Date & Time of Activity <span class="text-red-500">*</span></label>
-                        <input 
-                            type="datetime-local" 
-                            wire:model="formData.activity_date"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Date</label>
+                                <input 
+                                    type="date" 
+                                    wire:model="formData.activity_date_date"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Time</label>
+                                <select 
+                                    wire:model="formData.activity_date_time"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="">Select Time</option>
+                                    @for ($h = 0; $h < 24; $h++)
+                                        @php
+                                            $value = sprintf('%02d:00', $h);
+                                            $label = \Carbon\Carbon::createFromTime($h, 0)->format('g:i A');
+                                        @endphp
+                                        <option value="{{ $value }}">{{ $label }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
                         @error('formData.activity_date') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
@@ -488,8 +510,8 @@
                         <div class="flex flex-col gap-4">
                             <div>
                                 <p class="text-sm text-gray-600 mb-2">Shareable Link:</p>
-                                <a href="{{ url('/register/' . $viewingActivity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
-                                    {{ url('/register/' . $viewingActivity->shareable_link) }}
+                                <a href="{{ route('events.show', \Illuminate\Support\Str::slug($viewingActivity->title)) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
+                                    {{ route('events.show', \Illuminate\Support\Str::slug($viewingActivity->title)) }}
                                 </a>
                             </div>
 
@@ -499,7 +521,7 @@
                             >
                                 <p class="text-sm text-gray-600">QR Code:</p>
                                 <div class="bg-white p-2 rounded border inline-block">
-                                    {!! $this->getQrCode($viewingActivity->shareable_link) !!}
+                                    {!! $this->getQrCode($viewingActivity) !!}
                                 </div>
                                 <button
                                     type="button"
@@ -528,7 +550,7 @@
                                                 const pngUrl = URL.createObjectURL(blob);
                                                 const link = document.createElement('a');
                                                 link.href = pngUrl;
-                                                link.download = 'activity-qr-{{ $viewingActivity->shareable_link }}.png';
+                                                link.download = 'activity-qr-{{ \Illuminate\Support\Str::slug($viewingActivity->title) }}.png';
                                                 document.body.appendChild(link);
                                                 link.click();
                                                 document.body.removeChild(link);

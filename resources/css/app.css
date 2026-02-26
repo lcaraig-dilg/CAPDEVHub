@@ -24,3 +24,18 @@
 .pagination span {
     transition: all 0.2s ease;
 }
+
+/* Quill Editor Styles for Event Description */
+.ql-editor {
+    padding: 0;
+}
+
+.ql-editor p {
+    margin-bottom: 1rem;
+}
+
+.ql-editor img,
+.ql-editor video {
+    max-width: 100%;
+    height: auto;
+}

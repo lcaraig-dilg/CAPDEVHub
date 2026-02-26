@@ -24,6 +24,8 @@ new class extends Component
         'title' => '',
         'venue' => '',
         'activity_date' => '',
+        'activity_date_date' => '',
+        'activity_date_time' => '',
         'registration_start' => '',
         'registration_end' => '',
         'shareable_link' => '',
@@ -82,6 +84,8 @@ new class extends Component
             'title' => $activity->title,
             'venue' => $activity->venue,
             'activity_date' => $activity->activity_date->format('Y-m-d\TH:i'),
+            'activity_date_date' => $activity->activity_date->format('Y-m-d'),
+            'activity_date_time' => $activity->activity_date->format('H:00'),
             'registration_start' => $activity->registration_start->format('Y-m-d'),
             'registration_end' => $activity->registration_end->format('Y-m-d'),
             'shareable_link' => $activity->shareable_link,
@@ -119,6 +123,8 @@ new class extends Component
             'title' => '',
             'venue' => '',
             'activity_date' => '',
+            'activity_date_date' => '',
+            'activity_date_time' => '',
             'registration_start' => '',
             'registration_end' => '',
             'shareable_link' => '',
@@ -135,12 +141,137 @@ new class extends Component
         }
     }
 
+    protected function processDescriptionImages($description, $activityId = null)
+    {
+        if (empty($description)) {
+            return $description;
+        }
+
+        // Get old images if editing
+        $oldImages = [];
+        if ($activityId) {
+            $oldActivity = Activity::find($activityId);
+            if ($oldActivity && $oldActivity->description) {
+                // Extract existing image paths from old description
+                preg_match_all('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/i', $oldActivity->description, $matches);
+                if (!empty($matches[1])) {
+                    foreach ($matches[1] as $imgSrc) {
+                        // Only track storage paths, not external URLs
+                        if (strpos($imgSrc, 'storage/') !== false) {
+                            $path = str_replace(asset('storage/'), '', $imgSrc);
+                            $oldImages[] = $path;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Process base64 images in description
+        $processedDescription = preg_replace_callback(
+            '/<img[^>]+src=["\']data:image\/([^;]+);base64,([^"\']+)["\'][^>]*>/i',
+            function ($matches) use ($activityId) {
+                $imageType = $matches[1];
+                $base64Data = $matches[2];
+                
+                // Decode base64 image
+                $imageData = base64_decode($base64Data);
+                if ($imageData === false) {
+                    return $matches[0]; // Return original if decode fails
+                }
+                
+                // Generate unique filename
+                $filename = 'activity-' . ($activityId ?? 'new') . '-' . uniqid() . '.' . $imageType;
+                $path = 'activities/descriptions/' . $filename;
+                
+                // Store image
+                Storage::disk('public')->put($path, $imageData);
+                
+                // Get the full img tag and replace src
+                $imgTag = $matches[0];
+                $newSrc = asset('storage/' . $path);
+                
+                // Replace the src attribute
+                $newImgTag = preg_replace(
+                    '/src=["\']data:image\/[^"\']+["\']/i',
+                    'src="' . $newSrc . '"',
+                    $imgTag
+                );
+                
+                // Add style if not present
+                if (strpos($newImgTag, 'style=') === false) {
+                    $newImgTag = str_replace('>', ' style="max-width: 100%; height: auto;">', $newImgTag);
+                }
+                
+                return $newImgTag;
+            },
+            $description
+        );
+
+        // Clean up old images that are no longer in the description
+        if ($activityId && !empty($oldImages)) {
+            preg_match_all('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/i', $processedDescription, $newMatches);
+            $newImagePaths = [];
+            if (!empty($newMatches[1])) {
+                foreach ($newMatches[1] as $imgSrc) {
+                    if (strpos($imgSrc, 'storage/') !== false) {
+                        $path = str_replace(asset('storage/'), '', $imgSrc);
+                        $newImagePaths[] = $path;
+                    }
+                }
+            }
+            
+            // Delete images that are no longer referenced
+            foreach ($oldImages as $oldPath) {
+                if (!in_array($oldPath, $newImagePaths) && Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+        }
+
+        return $processedDescription;
+    }
+
+    public function updatedFormDataActivityDateDate()
+    {
+        $this->updateActivityDateTime();
+    }
+
+    public function updatedFormDataActivityDateTime()
+    {
+        $this->updateActivityDateTime();
+    }
+
+    protected function updateActivityDateTime()
+    {
+        if (!empty($this->formData['activity_date_date']) && !empty($this->formData['activity_date_time'])) {
+            // Extract hour from time and set minutes to 00
+            $time = $this->formData['activity_date_time'];
+            $timeParts = explode(':', $time);
+            $hour = $timeParts[0] ?? '00';
+            $this->formData['activity_date'] = $this->formData['activity_date_date'] . ' ' . $hour . ':00:00';
+        }
+    }
+
     public function save()
     {
         $this->isSubmitting = true;
         
         try {
+            // Combine date and time, ensuring minutes are always 00
+            if (!empty($this->formData['activity_date_date']) && !empty($this->formData['activity_date_time'])) {
+                $time = $this->formData['activity_date_time'];
+                $timeParts = explode(':', $time);
+                $hour = $timeParts[0] ?? '00';
+                $this->formData['activity_date'] = $this->formData['activity_date_date'] . ' ' . $hour . ':00:00';
+            }
+            
             $this->validate();
+
+            // Process description images (convert base64 to files)
+            $processedDescription = $this->processDescriptionImages(
+                $this->formData['description'],
+                $this->editingActivityId
+            );
 
             $activityData = [
                 'title' => $this->formData['title'],
@@ -149,7 +280,7 @@ new class extends Component
                 'registration_start' => $this->formData['registration_start'],
                 'registration_end' => $this->formData['registration_end'],
                 'shareable_link' => $this->formData['shareable_link'],
-                'description' => $this->formData['description'],
+                'description' => $processedDescription,
             ];
 
             // Handle banner image upload
@@ -245,9 +376,10 @@ new class extends Component
         $this->selectAll = false;
     }
 
-    public function getQrCode($link)
+    public function getQrCode($activity)
     {
-        $fullUrl = url('/register/' . $link);
+        $slug = \Illuminate\Support\Str::slug($activity->title);
+        $fullUrl = url('/show/' . $slug);
         // Use default SVG output (no Imagick dependency)
         return QrCode::size(200)->generate($fullUrl);
     }

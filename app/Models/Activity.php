@@ -22,4 +22,12 @@ class Activity extends Model
         'registration_start' => 'date',
         'registration_end' => 'date',
     ];
+
+    /**
+     * Get the slug for the activity based on title
+     */
+    public function getSlugAttribute()
+    {
+        return \Illuminate\Support\Str::slug($this->title);
+    }
 }
