@@ -84,22 +84,22 @@
     <div class="bg-gray-50 shadow rounded-lg overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-[#013141]">
+                <thead class="bg-[#c5b5a4]">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">
                             <input 
                                 type="checkbox" 
                                 wire:model.live="selectAll"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                             >
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Username</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Office</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">LGU Organization</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Username</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Office</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">LGU Organization</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-[#013141] uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-gray-50 divide-y divide-gray-200">

@@ -13,12 +13,15 @@
     <link rel="icon" type="image/png" href="{{ asset('capdev-logo-png-square.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('capdev-logo-png-square.png') }}">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50" x-data="{ sidebarOpen: true }">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <aside class="w-64 bg-gray-100 text-gray-900 flex flex-col border-r border-gray-200">
-            <div class="p-4 border-b border-gray-200 bg-white">
-                <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
+        <aside 
+            class="bg-[#E8E2DB] text-gray-900 flex flex-col border-r border-gray-200 overflow-hidden"
+            :style="sidebarOpen ? 'width: 16rem; transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);' : 'width: 0; transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);'"
+        >
+            <div class="p-4 border-b border-gray-200 bg-[#c5b5a4] flex items-center justify-between whitespace-nowrap" style="min-width: 16rem;">
+                <a href="{{ route('dashboard') }}" class="flex items-center space-x-2" x-show="sidebarOpen" x-cloak x-transition:enter="transition ease-out duration-200 delay-100" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                     <img
                         src="{{ asset('capdev-logo-with-name.png') }}"
                         alt="CAPDEVhub - LGCDD DILG NCR"
@@ -27,7 +30,7 @@
                 </a>
             </div>
 
-            <nav class="flex-1 p-4 space-y-1 text-sm" x-data="{ adminOpen: true, pagesOpen: true }">
+            <nav class="flex-1 p-4 space-y-1 text-sm overflow-y-auto" style="min-width: 16rem;" x-data="{ adminOpen: true, pagesOpen: true }" x-show="sidebarOpen" x-cloak x-transition:enter="transition ease-out duration-200 delay-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                 @php
                     $user = auth()->user();
                     $role = $user->role ?? 'user';
@@ -89,9 +92,9 @@
                             </a>
 
                             <a href="{{ route('certificates.index') }}"
-                               class="flex items-center px-3 py-2 rounded-md transition
+                               class="flex items-start px-3 py-2 rounded-md transition
                                       {{ request()->routeIs('certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                                <span>Certificate of Attendance Generator</span>
+                                <span class="leading-tight">Certificate of Attendance Generator</span>
                             </a>
 
                             <a href="{{ route('users.index') }}"
@@ -159,9 +162,9 @@
                             </a>
 
                             <a href="{{ route('certificates.index') }}"
-                               class="flex items-center px-3 py-2 rounded-md transition
+                               class="flex items-start px-3 py-2 rounded-md transition
                                       {{ request()->routeIs('certificates.*') ? 'bg-[#0a7ca1] bg-opacity-20 text-white font-semibold' : 'text-gray-800 hover:bg-gray-200' }}">
-                                <span>Certificate of Attendance Generator</span>
+                                <span class="leading-tight">Certificate of Attendance Generator</span>
                             </a>
                         </div>
                     </div>
@@ -257,7 +260,7 @@
                 @endif
             </nav>
 
-            <div class="p-4 border-t border-gray-200 text-xs text-gray-500 bg-white">
+            <div class="p-4 border-t border-gray-200 text-xs text-gray-500 bg-[#c5b5a4] whitespace-nowrap" style="min-width: 16rem;" x-show="sidebarOpen" x-cloak x-transition:enter="transition ease-out duration-200 delay-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button
@@ -277,8 +280,19 @@
                 class="h-16 text-white shadow-md flex items-center justify-between px-6"
                 style="background: linear-gradient(to right, #0a7ba1, #013141);"
             >
-                <div class="text-sm font-medium">
-                    @yield('page-title')
+                <div class="flex items-center gap-4">
+                    <button
+                        @click="sidebarOpen = !sidebarOpen"
+                        class="p-2 rounded-md hover:bg-white/10 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        title="Toggle Sidebar"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="text-sm font-medium">
+                        @yield('page-title')
+                    </div>
                 </div>
                 <div class="text-sm">
                     @php $user = auth()->user(); @endphp

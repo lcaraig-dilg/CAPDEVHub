@@ -81,10 +81,11 @@ php artisan make:livewire ComponentName
 ## Color Palette
 The website uses a specific color palette that must be followed:
 
-- **`#013141`** - Dark accent color (used for headers, dark backgrounds, table headers, etc.)
+- **`#013141`** - Dark accent color (used for headers, dark backgrounds, etc.)
 - **`#0a7ca1`** - Light accent color (used for links, hover states, secondary elements)
 - **`#FAB95B`** - Bold color (used for buttons, important/significant information, call-to-action elements)
-- **`#E8E2DB`** - Empty spaces/backgrounds (used for empty areas, light backgrounds instead of pure white)
+- **`#E8E2DB`** - For side panel background, make the header and footer of the sidepanel lighter.
+- **`#c5b5a4`** - For side panel header (the one with logo) and footer (the one with logout button). Use it also on the table headers (the column names)
 
 **Important Color Guidelines:**
 - Avoid pure white backgrounds (use `#E8E2DB` or similar light colors instead)
