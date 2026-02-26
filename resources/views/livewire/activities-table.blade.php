@@ -112,10 +112,111 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $activity->registration_start->format('M d, Y') }} - {{ $activity->registration_end->format('M d, Y') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{{ url('/register/' . $activity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline">
-                                    {{ url('/register/' . $activity->shareable_link) }}
-                                </a>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                <div class="flex items-center gap-3">
+                                    <div 
+                                        class="flex-shrink-0 cursor-pointer"
+                                        x-data="{ showConfirm: false }"
+                                        @click="
+                                            showConfirm = true;
+                                        "
+                                    >
+                                        <div class="bg-white p-1 rounded border inline-block hover:border-[#0a7ca1] transition-colors qr-code-container" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                            {!! $this->getQrCode($activity->shareable_link) !!}
+                                        </div>
+                                        
+                                        <!-- Confirmation Modal -->
+                                        <div 
+                                            x-show="showConfirm"
+                                            x-cloak
+                                            class="fixed inset-0 z-50 flex items-center justify-center"
+                                            style="background-color: rgba(0, 0, 0, 0.5);"
+                                            x-transition:enter="ease-out duration-300"
+                                            x-transition:enter-start="opacity-0"
+                                            x-transition:enter-end="opacity-100"
+                                            x-transition:leave="ease-in duration-200"
+                                            x-transition:leave-start="opacity-100"
+                                            x-transition:leave-end="opacity-0"
+                                            @click.away="showConfirm = false"
+                                        >
+                                            <div 
+                                                class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+                                                @click.stop
+                                                x-transition:enter="ease-out duration-300"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100"
+                                                x-transition:leave="ease-in duration-200"
+                                                x-transition:leave-start="opacity-100 scale-100"
+                                                x-transition:leave-end="opacity-0 scale-95"
+                                            >
+                                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Download QR Code</h3>
+                                                <p class="text-sm text-gray-600 mb-6">You are about to download the QR code of the event.</p>
+                                                <div class="flex justify-end gap-3">
+                                                    <button
+                                                        @click="showConfirm = false"
+                                                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                                                    >
+                                                        Close
+                                                    </button>
+                                                    <button
+                                                        @click="
+                                                            const parentDiv = $el.closest('[x-data]');
+                                                            const qrContainer = parentDiv.querySelector('.bg-white.p-1');
+                                                            const svg = qrContainer ? qrContainer.querySelector('svg') : null;
+                                                            if (!svg) {
+                                                                showConfirm = false;
+                                                                return;
+                                                            }
+                                                            
+                                                            const serializer = new XMLSerializer();
+                                                            const svgString = serializer.serializeToString(svg);
+                                                            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                                                            const url = URL.createObjectURL(svgBlob);
+                                                            const img = new Image();
+                                                            
+                                                            img.onload = () => {
+                                                                const canvas = document.createElement('canvas');
+                                                                canvas.width = img.width;
+                                                                canvas.height = img.height;
+                                                                const ctx = canvas.getContext('2d');
+                                                                ctx.drawImage(img, 0, 0);
+                                                                URL.revokeObjectURL(url);
+                                                                
+                                                                canvas.toBlob((blob) => {
+                                                                    if (!blob) {
+                                                                        showConfirm = false;
+                                                                        return;
+                                                                    }
+                                                                    const pngUrl = URL.createObjectURL(blob);
+                                                                    const link = document.createElement('a');
+                                                                    link.href = pngUrl;
+                                                                    link.download = 'activity-qr-{{ $activity->shareable_link }}.png';
+                                                                    document.body.appendChild(link);
+                                                                    link.click();
+                                                                    document.body.removeChild(link);
+                                                                    URL.revokeObjectURL(pngUrl);
+                                                                    showConfirm = false;
+                                                                }, 'image/png');
+                                                            };
+                                                            
+                                                            img.onerror = () => {
+                                                                showConfirm = false;
+                                                            };
+                                                            
+                                                            img.src = url;
+                                                        "
+                                                        class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-colors duration-200"
+                                                    >
+                                                        Continue
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{{ url('/register/' . $activity->shareable_link) }}" target="_blank" class="text-[#0a7ca1] hover:text-[#013141] hover:underline break-all">
+                                        {{ url('/register/' . $activity->shareable_link) }}
+                                    </a>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end gap-2">
@@ -596,4 +697,13 @@
             });
         })();
     </script>
+    
+    <style>
+        .qr-code-container svg {
+            width: 80px !important;
+            height: 80px !important;
+            max-width: 80px !important;
+            max-height: 80px !important;
+        }
+    </style>
 </div>
