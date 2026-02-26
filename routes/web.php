@@ -4,11 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EventController;
 
 // Redirect root to login
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// Public Event Page (accessible without authentication)
+Route::get('/show/{slug}', [EventController::class, 'show'])->name('events.show');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -30,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Admin panel sections (placeholders for now)
+    // Admin panel sections
     Route::view('/activities', 'activities.index')->name('activities.index');
     Route::view('/pre-post-tests', 'prepost.index')->name('prepost.index');
     Route::view('/materials-repository', 'materials.index')->name('materials.index');

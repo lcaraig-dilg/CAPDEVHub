@@ -120,7 +120,7 @@
     <div class="mt-8 flex items-center justify-between">
         <a 
             href="{{ route('dashboard') }}" 
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a7ca1] transition"
         >
             Back to Dashboard
         </a>
@@ -128,7 +128,7 @@
         @if (!method_exists($user, 'isSuperAdmin') || !$user->isSuperAdmin())
             <a 
                 href="{{ route('profile.edit') }}" 
-                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-900 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#FAB95B] hover:bg-[#F9A84D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FAB95B] transition"
             >
                 Edit Information
             </a>

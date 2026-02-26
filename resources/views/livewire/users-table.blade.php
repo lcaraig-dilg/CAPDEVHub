@@ -42,7 +42,7 @@
             </div>
             <button 
                 wire:click="openCreateModal"
-                class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-[#0a7ba1] transition-all duration-200 font-medium flex items-center gap-2"
+                class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-all duration-200 font-medium flex items-center gap-2"
             >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -84,22 +84,22 @@
     <div class="bg-gray-50 shadow rounded-lg overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-blue-900">
+                <thead class="bg-[#c5b5a4]">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">
                             <input 
                                 type="checkbox" 
                                 wire:model.live="selectAll"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                             >
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Username</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Office</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">LGU Organization</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Role</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Username</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Office</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">LGU Organization</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-[#013141] uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-[#013141] uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-gray-50 divide-y divide-gray-200">
@@ -131,7 +131,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                     @if($user->role === 'super_admin') bg-purple-100 text-purple-800
-                                    @elseif($user->role === 'admin') bg-blue-100 text-blue-800
+                                    @elseif($user->role === 'admin') bg-[#0a7ca1] bg-opacity-20 text-white
                                     @else bg-gray-100 text-gray-800
                                     @endif">
                                     {{ strtoupper(str_replace('_', ' ', $user->role)) }}
@@ -141,7 +141,7 @@
                                 <div class="flex justify-end gap-2">
                                     <button 
                                         wire:click="openEditModal({{ $user->id }})"
-                                        class="text-blue-600 hover:text-blue-900 transition-colors duration-200 p-1 rounded hover:bg-blue-50"
+                                        class="text-[#0a7ca1] hover:text-[#013141] transition-colors duration-200 p-1 rounded hover:bg-[#0a7ca1] hover:bg-opacity-10"
                                         title="Edit User"
                                     >
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -510,7 +510,7 @@
                             type="submit"
                             wire:loading.attr="disabled"
                             wire:target="save"
-                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
+                            class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]"
                         >
                             <span wire:loading.remove wire:target="save" class="flex items-center justify-center gap-2">
                                 @if($editingUserId)
