@@ -283,18 +283,10 @@
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
         >
-            <div class="flex justify-between items-center mb-4 sticky top-0 bg-white pb-4 border-b">
+            <div class="mb-4 sticky top-0 bg-white pb-4 border-b">
                 <h3 class="text-lg font-bold text-gray-900">
                     {{ $editingActivityId ? 'Edit Activity' : 'Create New Activity' }}
                 </h3>
-                <button 
-                    wire:click="closeModal" 
-                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded hover:bg-gray-100"
-                >
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
             </div>
 
             <form wire:submit.prevent="save">
@@ -319,6 +311,18 @@
                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         >
                         @error('formData.venue') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Google Maps Link (Optional) --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Google Maps Link (Optional)</label>
+                        <input 
+                            type="url" 
+                            wire:model="formData.venue_google_maps_link"
+                            placeholder="https://maps.google.com/..."
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                        @error('formData.venue_google_maps_link') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Date & Time of Activity --}}
@@ -421,6 +425,69 @@
                         ></textarea>
                         @error('formData.description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
+
+                    {{-- Accent Colors --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Site Accent Colors</label>
+                        
+                        {{-- Color Palette Selection --}}
+                        <div class="mb-4">
+                            <label class="block text-xs text-gray-500 mb-1">Color Palette</label>
+                            <select 
+                                wire:model.live="formData.color_palette"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option value="default">Default Color Palette</option>
+                                <option value="plain">Plain Color Palette</option>
+                                <option value="custom">Custom Colors</option>
+                            </select>
+                            @error('formData.color_palette') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            
+                            {{-- Palette Description --}}
+                            <div class="mt-2 text-xs text-gray-500">
+                                @if($formData['color_palette'] === 'default')
+                                    <p>Color 1: #013141 (dark teal), Color 2: #0A7CA1 (light blue/cyan), Color 3: #FAB95B (orange/yellow)</p>
+                                @elseif($formData['color_palette'] === 'plain')
+                                    <p>Color 1: White, Color 2: Gray-100, Color 3: Black</p>
+                                @else
+                                    <p>Choose your own custom colors for Color 1, 2, and 3</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Color Pickers (Only show for custom) --}}
+                        @if($formData['color_palette'] === 'custom')
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Color 1</label>
+                                    <input 
+                                        type="color" 
+                                        wire:model="formData.accent_color_1"
+                                        class="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                                    >
+                                    @error('formData.accent_color_1') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Color 2</label>
+                                    <input 
+                                        type="color" 
+                                        wire:model="formData.accent_color_2"
+                                        class="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                                    >
+                                    @error('formData.accent_color_2') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-500 mb-1">Color 3</label>
+                                    <input 
+                                        type="color" 
+                                        wire:model="formData.accent_color_3"
+                                        class="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                                    >
+                                    @error('formData.accent_color_3') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="mt-6 flex justify-end space-x-3 sticky bottom-0 bg-white pt-4 border-t">
@@ -491,16 +558,8 @@
             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
         >
             @if($viewingActivity)
-                <div class="flex justify-between items-center mb-4 sticky top-0 bg-white pb-4 border-b">
+                <div class="mb-4 sticky top-0 bg-white pb-4 border-b">
                     <h3 class="text-lg font-bold text-gray-900">{{ $viewingActivity->title }}</h3>
-                    <button 
-                        wire:click="closeDetailsModal" 
-                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 rounded hover:bg-gray-100"
-                    >
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
                 </div>
 
                 <div class="space-y-6">

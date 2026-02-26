@@ -23,6 +23,7 @@ new class extends Component
     public $formData = [
         'title' => '',
         'venue' => '',
+        'venue_google_maps_link' => '',
         'activity_date' => '',
         'activity_date_date' => '',
         'activity_date_time' => '',
@@ -31,6 +32,10 @@ new class extends Component
         'shareable_link' => '',
         'banner_image' => null,
         'description' => '',
+        'color_palette' => 'default',
+        'accent_color_1' => '#013141',
+        'accent_color_2' => '#0A7CA1',
+        'accent_color_3' => '#FAB95B',
     ];
 
     protected function rules()
@@ -38,11 +43,15 @@ new class extends Component
         $rules = [
             'formData.title' => 'required|string|max:255',
             'formData.venue' => 'required|string|max:255',
+            'formData.venue_google_maps_link' => 'nullable|url|max:500',
             'formData.activity_date' => 'required|date|after_or_equal:today',
             'formData.registration_start' => 'required|date',
             'formData.registration_end' => 'required|date|after:formData.registration_start',
             'formData.shareable_link' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/',
             'formData.description' => 'nullable|string',
+            'formData.accent_color_1' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'formData.accent_color_2' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'formData.accent_color_3' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ];
 
         if ($this->editingActivityId) {
@@ -80,17 +89,47 @@ new class extends Component
     public function openEditModal($activityId)
     {
         $activity = Activity::findOrFail($activityId);
+        $hour = $activity->activity_date->format('H');
+        $minute = $activity->activity_date->format('i');
+        
+        // Round to nearest allowed hour or use exact if it matches
+        $allowedHours = ['08', '09', '10', '15', '16', '17'];
+        $timeValue = $hour . ':00';
+        if (!in_array($hour, $allowedHours) || $minute != '00') {
+            // Find nearest allowed hour
+            $hourInt = (int)$hour;
+            if ($hourInt < 8) {
+                $timeValue = '08:00';
+            } elseif ($hourInt <= 10) {
+                $timeValue = $hourInt . ':00';
+                if ($timeValue == '11:00' || $timeValue == '12:00' || $timeValue == '13:00' || $timeValue == '14:00') {
+                    $timeValue = '10:00';
+                }
+            } elseif ($hourInt < 15) {
+                $timeValue = '10:00';
+            } elseif ($hourInt <= 17) {
+                $timeValue = $hourInt . ':00';
+            } else {
+                $timeValue = '17:00';
+            }
+        }
+        
         $this->formData = [
             'title' => $activity->title,
             'venue' => $activity->venue,
+            'venue_google_maps_link' => $activity->venue_google_maps_link ?? '',
             'activity_date' => $activity->activity_date->format('Y-m-d\TH:i'),
             'activity_date_date' => $activity->activity_date->format('Y-m-d'),
-            'activity_date_time' => $activity->activity_date->format('H:00'),
+            'activity_date_time' => $timeValue,
             'registration_start' => $activity->registration_start->format('Y-m-d'),
             'registration_end' => $activity->registration_end->format('Y-m-d'),
             'shareable_link' => $activity->shareable_link,
             'banner_image' => null,
             'description' => $activity->description ?? '',
+            'color_palette' => $activity->color_palette ?? 'default',
+            'accent_color_1' => $activity->accent_color_1 ?? '#013141',
+            'accent_color_2' => $activity->accent_color_2 ?? '#0A7CA1',
+            'accent_color_3' => $activity->accent_color_3 ?? '#FAB95B',
         ];
         $this->editingActivityId = $activityId;
         $this->bannerImagePreview = $activity->banner_image ? asset('storage/' . $activity->banner_image) : null;
@@ -122,6 +161,7 @@ new class extends Component
         $this->formData = [
             'title' => '',
             'venue' => '',
+            'venue_google_maps_link' => '',
             'activity_date' => '',
             'activity_date_date' => '',
             'activity_date_time' => '',
@@ -130,6 +170,10 @@ new class extends Component
             'shareable_link' => '',
             'banner_image' => null,
             'description' => '',
+            'color_palette' => 'default',
+            'accent_color_1' => '#013141',
+            'accent_color_2' => '#0A7CA1',
+            'accent_color_3' => '#FAB95B',
         ];
         $this->resetValidation();
     }
@@ -139,6 +183,23 @@ new class extends Component
         if ($this->formData['banner_image']) {
             $this->bannerImagePreview = $this->formData['banner_image']->temporaryUrl();
         }
+    }
+
+    public function updatedFormDataColorPalette()
+    {
+        // Set colors based on palette selection
+        if ($this->formData['color_palette'] === 'default') {
+            // Default color palette
+            $this->formData['accent_color_1'] = '#013141';
+            $this->formData['accent_color_2'] = '#0A7CA1';
+            $this->formData['accent_color_3'] = '#FAB95B';
+        } elseif ($this->formData['color_palette'] === 'plain') {
+            // Plain color palette
+            $this->formData['accent_color_1'] = '#FFFFFF'; // white
+            $this->formData['accent_color_2'] = '#F3F4F6'; // gray-100
+            $this->formData['accent_color_3'] = '#000000'; // black
+        }
+        // For 'custom', keep existing values
     }
 
     protected function processDescriptionImages($description, $activityId = null)
@@ -276,11 +337,16 @@ new class extends Component
             $activityData = [
                 'title' => $this->formData['title'],
                 'venue' => $this->formData['venue'],
+                'venue_google_maps_link' => $this->formData['venue_google_maps_link'] ?? null,
                 'activity_date' => $this->formData['activity_date'],
                 'registration_start' => $this->formData['registration_start'],
                 'registration_end' => $this->formData['registration_end'],
                 'shareable_link' => $this->formData['shareable_link'],
                 'description' => $processedDescription,
+                'color_palette' => $this->formData['color_palette'] ?? 'default',
+                'accent_color_1' => $this->formData['accent_color_1'] ?? '#013141',
+                'accent_color_2' => $this->formData['accent_color_2'] ?? '#0A7CA1',
+                'accent_color_3' => $this->formData['accent_color_3'] ?? '#FAB95B',
             ];
 
             // Handle banner image upload
