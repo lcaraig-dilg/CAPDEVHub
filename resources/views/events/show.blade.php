@@ -269,14 +269,25 @@
 
                     {{-- Share Section --}}
                     @php
-                        $sharingDetails = $activity->title . "\n";
-                        $sharingDetails .= "Venue: " . $activity->venue . "\n";
-                        $sharingDetails .= "Date & Time: " . $activity->activity_date->format('F d, Y h:i A') . "\n";
-                        $plainDescription = trim(strip_tags($activity->description));
-                        if ($plainDescription !== '') {
-                            $sharingDetails .= $plainDescription . "\n\n";
-                        }
-                        $sharingDetails .= "Link: " . url()->current();
+                        // Build multiple short, formal government-style invitation messages and randomize them on copy
+                        $dateTime = $activity->activity_date->format('F d, Y h:i A');
+                        $eventUrl = url()->current();
+                        $title    = $activity->title;
+                        $venue    = $activity->venue;
+
+                        $sharingTemplates = [
+                            // Template 1 – Standard formal invite
+                            "The DILG–NCR, through the LGCDD, cordially invites you to {$title}.\n\n📅 Date & Time: {$dateTime}\n📍 Venue: {$venue}\n\nFor complete event details, please visit: {$eventUrl}",
+
+                            // Template 2 – Emphasis on participation
+                            "You are formally invited to participate in {$title}, organized by DILG–NCR.\n\n📅 Date & Time: {$dateTime}\n📍 Venue: {$venue}\n\nFurther information is available at: {$eventUrl}",
+
+                            // Template 3 – Emphasis on purpose and details link
+                            "Please join us for {$title}, a capacity development activity of DILG–NCR.\n\n📅 Date & Time: {$dateTime}\n📍 Venue: {$venue}\n\nTo view the full invitation and event details, kindly visit: {$eventUrl}",
+
+                            // Template 4 – Save-the-date style, still formal
+                            "You are invited to {$title}.\n\n📅 Schedule: {$dateTime}\n📍 Venue: {$venue}\n\nFor official information and updates, please refer to: {$eventUrl}",
+                        ];
                     @endphp
                     <div class="rounded-lg shadow-md p-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
                         <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }};">Share this event</h2>
@@ -514,7 +525,10 @@
 
     <script>
         function copyEventLink() {
-            const sharingDetails = @json($sharingDetails);
+            const templates = @json($sharingTemplates);
+            const randomIndex = Math.floor(Math.random() * templates.length);
+            const sharingDetails = templates[randomIndex] || templates[0];
+
             navigator.clipboard.writeText(sharingDetails).then(function() {
                 const buttonText = document.getElementById('copy-link-text');
                 const originalText = buttonText.textContent;
