@@ -71,7 +71,7 @@ class LoginController extends Controller
             if ($request->filled('redirect')) {
                 return redirect()->to($request->input('redirect'));
             }
-
+            
             return redirect()->intended(route('dashboard'));
         }
 
