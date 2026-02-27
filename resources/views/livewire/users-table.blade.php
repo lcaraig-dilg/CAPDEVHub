@@ -1,4 +1,21 @@
 <div class="bg-gray-100 rounded-lg p-6 transition-all duration-300">
+    {{-- Full-page loading overlay for Add / Edit User --}}
+    <div 
+        wire:loading.delay
+        wire:target="openCreateModal,openEditModal"
+        class="fixed inset-0 z-50 w-screen h-screen"
+        style="background-color: rgba(0, 0, 0, 0.25); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+    >
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg px-8 py-6 shadow-xl flex flex-col items-center gap-4">
+            <div class="flex items-end gap-2">
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 0ms;"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 150ms;"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 300ms;"></span>
+            </div>
+            <p class="text-sm font-medium text-[#013141] tracking-wide">Opening user form</p>
+        </div>
+    </div>
+
     {{-- Success Message --}}
     @if (session()->has('success'))
         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative transition-all duration-300 animate-fade-in" role="alert">
@@ -42,12 +59,16 @@
             </div>
             <button 
                 wire:click="openCreateModal"
+                wire:loading.attr="disabled"
+                wire:target="openCreateModal"
                 class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] transition-all duration-200 font-medium flex items-center gap-2"
             >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Add New User
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add New User
+                </span>
             </button>
         </div>
     </div>
@@ -195,7 +216,7 @@
         x-transition:leave-end="opacity-0"
     >
         <div 
-            class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-2xl rounded-lg bg-white max-h-[90vh] transform"
+            class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-2xl rounded-lg bg-white max-h-[90vh] transform flex flex-col overflow-hidden"
             wire:click.stop
             x-transition:enter="ease-out duration-300"
             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
@@ -204,7 +225,7 @@
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
         >
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b bg-white">
                     <h3 class="text-lg font-bold text-gray-900">
                         {{ $editingUserId ? 'Edit User' : 'Create New User' }}
                     </h3>
@@ -218,8 +239,8 @@
                     </button>
                 </div>
 
-                <form wire:submit.prevent="save">
-                    <div class="space-y-6 max-h-[70vh] overflow-y-auto pr-2" wire:loading.class="opacity-50 pointer-events-none" wire:target="save">
+                <form wire:submit.prevent="save" class="flex-1 flex flex-col min-h-0">
+                    <div class="flex-1 overflow-y-auto min-h-0 pr-2 space-y-6" wire:loading.class="opacity-50 pointer-events-none" wire:target="save">
                         {{-- Personal Information Section --}}
                         <div class="border-b border-gray-200 pb-4">
                             <h4 class="text-md font-semibold text-gray-900 mb-4">Personal Information</h4>
@@ -424,16 +445,6 @@
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
-                                <input 
-                                    type="text" 
-                                    wire:model="formData.username"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                >
-                                @error('formData.username') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate from email</p>
-                            </div>
-                            <div class="mt-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Dietary Restrictions</label>
                                 <textarea 
                                     wire:model="formData.dietary_restrictions"
@@ -445,11 +456,20 @@
                             </div>
                         </div>
 
-                        {{-- Account Security Section --}}
+                        {{-- Account Information Section --}}
                         <div>
-                            <h4 class="text-md font-semibold text-gray-900 mb-4">Account Security</h4>
+                            <h4 class="text-md font-semibold text-gray-900 mb-4">Account Information</h4>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Username <span class="text-red-500">*</span></label>
+                                    <input 
+                                        type="text" 
+                                        wire:model="formData.username"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                    @error('formData.username') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Password @if(!$editingUserId)<span class="text-red-500">*</span>@endif
@@ -466,6 +486,8 @@
                                         <p class="mt-1 text-xs text-gray-500">Password must be at least 8 characters long</p>
                                     @endif
                                 </div>
+                            </div>
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Confirm Password @if(!$editingUserId)<span class="text-red-500">*</span>@endif
@@ -477,23 +499,23 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     >
                                 </div>
-                            </div>
-                            <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Role <span class="text-red-500">*</span></label>
-                                <select 
-                                    wire:model="formData.role"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                >
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="super_admin">Super Admin</option>
-                                </select>
-                                @error('formData.role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Role <span class="text-red-500">*</span></label>
+                                    <select 
+                                        wire:model="formData.role"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="super_admin">Super Admin</option>
+                                    </select>
+                                    @error('formData.role') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-end space-x-3">
+                    <div class="mt-4 flex justify-end space-x-3 pt-4 border-t bg-white">
                         <button 
                             type="button"
                             wire:click="closeModal"

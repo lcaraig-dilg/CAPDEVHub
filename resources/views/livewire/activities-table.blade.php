@@ -1,4 +1,21 @@
 <div class="bg-gray-100 rounded-lg p-6 transition-all duration-300">
+    {{-- Full-page loading overlay for Add New Activity --}}
+    <div 
+        wire:loading.delay
+        wire:target="openCreateModal,openEditModal"
+        class="fixed inset-0 z-50 w-screen h-screen"
+        style="background-color: rgba(0, 0, 0, 0.25); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+    >
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg px-8 py-6 shadow-xl flex flex-col items-center gap-4">
+            <div class="flex items-end gap-2">
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 0ms;"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 150ms;"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#013141] animate-bounce" style="animation-delay: 300ms;"></span>
+            </div>
+            <p class="text-sm font-medium text-[#013141] tracking-wide">Opening activity form</p>
+        </div>
+    </div>
+
     {{-- Success Message --}}
     @if (session()->has('success'))
         <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative transition-all duration-300" role="alert">
@@ -42,12 +59,16 @@
             </div>
             <button 
                 wire:click="openCreateModal"
+                wire:loading.attr="disabled"
+                wire:target="openCreateModal"
                 class="px-4 py-2 bg-[#FAB95B] text-white rounded-md hover:bg-[#F9A84D] rounded-md transition-all duration-200 font-medium flex items-center gap-2"
             >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Add New Activity
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add New Activity
+                </span>
             </button>
         </div>
     </div>
@@ -275,7 +296,7 @@
         x-transition:leave-end="opacity-0"
     >
         <div 
-            class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-2xl rounded-lg bg-white max-h-[90vh] transform overflow-y-auto"
+            class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-2xl rounded-lg bg-white max-h-[90vh] transform flex flex-col overflow-hidden"
             x-transition:enter="ease-out duration-300"
             x-transition:enter-start="opacity-0 translate-y-8 scale-95"
             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -283,7 +304,7 @@
             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
             x-transition:leave-end="opacity-0 translate-y-8 scale-95"
         >
-            <div class="flex justify-between items-center mb-4 sticky top-0 bg-white pb-4 border-b">
+            <div class="flex justify-between items-center mb-4 pb-4 border-b bg-white">
                 <h3 class="text-lg font-bold text-gray-900">
                     {{ $editingActivityId ? 'Edit Activity' : 'Create New Activity' }}
                 </h3>
@@ -297,8 +318,8 @@
                 </button>
             </div>
 
-            <form wire:submit.prevent="save">
-                <div class="space-y-6" wire:loading.class="opacity-50 pointer-events-none" wire:target="save">
+            <form wire:submit.prevent="save" class="flex-1 flex flex-col min-h-0">
+                <div class="flex-1 overflow-y-auto min-h-0 pr-1 space-y-6" wire:loading.class="opacity-50 pointer-events-none" wire:target="save">
                     {{-- Activity Title --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Activity Title <span class="text-red-500">*</span></label>
@@ -342,6 +363,7 @@
                                 <input 
                                     type="date" 
                                     wire:model="formData.activity_date_date"
+                                    min="{{ now()->toDateString() }}"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 >
                             </div>
@@ -365,26 +387,26 @@
                         @error('formData.activity_date') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Registration Span --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Registration Start <span class="text-red-500">*</span></label>
+                    {{-- Registration Span (Date Range) --}}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Registration Span <span class="text-red-500">*</span></label>
+                        <div x-data class="relative">
                             <input 
-                                type="date" 
-                                wire:model="formData.registration_start"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                type="text"
+                                id="registration-range"
+                                x-ref="registrationRange"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Select registration date range"
+                                readonly
+                                data-start="{{ $formData['registration_start'] ?? '' }}"
+                                data-end="{{ $formData['registration_end'] ?? '' }}"
                             >
-                            @error('formData.registration_start') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Registration End <span class="text-red-500">*</span></label>
-                            <input 
-                                type="date" 
-                                wire:model="formData.registration_end"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                            @error('formData.registration_end') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        </div>
+                        {{-- Hidden fields bound to Livewire for validation and saving --}}
+                        <input type="hidden" wire:model="formData.registration_start">
+                        <input type="hidden" wire:model="formData.registration_end">
+                        @error('formData.registration_start') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @error('formData.registration_end') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Shareable Link --}}
@@ -498,7 +520,8 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3 sticky bottom-0 bg-white pt-4 border-t">
+                {{-- Footer buttons pinned at bottom of modal --}}
+                <div class="mt-4 flex justify-end space-x-3 pt-4 border-t bg-white">
                     <button 
                         type="button"
                         wire:click="closeModal"
@@ -679,6 +702,10 @@
         </div>
     </div>
 
+    {{-- Flatpickr Date Range Picker --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     {{-- Quill.js Rich Text Editor with image resize & drag-drop modules --}}
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -691,11 +718,22 @@
                 instance: null,
                 initialized: false,
             };
+            window.registrationRange = window.registrationRange || {
+                instance: null,
+                initialized: false,
+            };
 
             function initQuill() {
                 const editorElement = document.getElementById('description-editor');
                 if (editorElement && !window.activityQuill.initialized) {
-                    // Clear any existing content
+                    // Remove any existing Quill toolbars (in case of previous instances)
+                    const wrapper = editorElement.parentElement;
+                    if (wrapper) {
+                        const existingToolbars = wrapper.querySelectorAll('.ql-toolbar');
+                        existingToolbars.forEach(tb => tb.remove());
+                    }
+
+                    // Clear any existing content inside the editor container
                     editorElement.innerHTML = '';
                     
                     const quillInstance = new Quill('#description-editor', {
@@ -730,7 +768,10 @@
                         if (hiddenInput) {
                             hiddenInput.value = content;
                         }
-                        @this.set('formData.description', content);
+                        const lw = window.Livewire?.find('{{ $this->getId() }}');
+                        if (lw) {
+                            lw.set('formData.description', content);
+                        }
                     });
 
                     // Load existing content if editing from the hidden textarea (Livewire-bound)
@@ -748,27 +789,63 @@
                 if (qi) {
                     const editorElement = document.getElementById('description-editor');
                     if (editorElement) {
+                        // Clear editor content
                         editorElement.innerHTML = '';
+                        // Also remove any Quill toolbars attached to this editor
+                        const wrapper = editorElement.parentElement;
+                        if (wrapper) {
+                            const existingToolbars = wrapper.querySelectorAll('.ql-toolbar');
+                            existingToolbars.forEach(tb => tb.remove());
+                        }
                     }
                     window.activityQuill.instance = null;
                     window.activityQuill.initialized = false;
                 }
             }
 
-            // Watch for modal visibility
-            document.addEventListener('DOMContentLoaded', function() {
-                setInterval(function() {
-                    const modal = document.querySelector('[x-data*="showModal"]');
-                    if (modal) {
-                        const isVisible = modal.style.display !== 'none' && !modal.hasAttribute('x-cloak');
-                        if (isVisible && !window.activityQuill.initialized) {
-                            setTimeout(initQuill, 300);
-                        } else if (!isVisible && isInitialized) {
-                            destroyQuill();
+            function initRegistrationRange() {
+                if (window.registrationRange.initialized) {
+                    return;
+                }
+
+                if (typeof flatpickr === 'undefined') {
+                    return;
+                }
+
+                const input = document.getElementById('registration-range');
+                if (!input) {
+                    return;
+                }
+
+                const lw = window.Livewire?.find('{{ $this->getId() }}');
+                if (!lw) {
+                    return;
+                }
+
+                const fp = flatpickr(input, {
+                    mode: 'range',
+                    dateFormat: 'Y-m-d',
+                    minDate: 'today',
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length === 2) {
+                            const [start, end] = selectedDates;
+                            const startStr = start.toISOString().slice(0, 10);
+                            const endStr = end.toISOString().slice(0, 10);
+                            lw.set('formData.registration_start', startStr);
+                            lw.set('formData.registration_end', endStr);
                         }
-                    }
-                }, 500);
-            });
+                    },
+                });
+
+                const start = input.dataset.start;
+                const end = input.dataset.end;
+                if (start && end) {
+                    fp.setDate([start, end], false);
+                }
+
+                window.registrationRange.instance = fp;
+                window.registrationRange.initialized = true;
+            }
 
             // Initialize / sync on Livewire updates (e.g. when opening Edit)
             document.addEventListener('livewire:init', () => {
@@ -789,6 +866,9 @@
                                 qi.root.innerHTML = hiddenInput.value || '';
                             }
                         }
+
+                        // Ensure registration range picker is initialized when modal is visible
+                        initRegistrationRange();
                     }, 100);
                 });
             });
