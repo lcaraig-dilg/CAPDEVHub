@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ActivityRegistrationController;
+use App\Http\Controllers\CaptchaController;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -13,6 +15,13 @@ Route::get('/', function () {
 
 // Public Event Page (accessible without authentication)
 Route::get('/show/{slug}', [EventController::class, 'show'])->name('events.show');
+
+// Activity registration (both authenticated users and guests)
+Route::post('/show/{slug}/register', [ActivityRegistrationController::class, 'register'])
+    ->name('events.register');
+
+// Captcha image for guest registrations
+Route::get('/captcha', [CaptchaController::class, 'image'])->name('captcha.image');
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {

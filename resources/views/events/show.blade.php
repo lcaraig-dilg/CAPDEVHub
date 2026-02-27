@@ -83,6 +83,16 @@
         
         $color2Rgba = $hexToRgba($color2, 0.50);
         
+        // Determine text stroke colors based on background colors
+        // If background is dark, use light outline; if background is light, use dark outline
+        // Determine text stroke colors based on text color (not background)
+        // If text color is dark, use light stroke; if text color is light, use dark stroke
+        $titleStrokeColor = $isDark($color3) ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.5)';
+        $sectionHeadingStrokeColor = $isDark($color3) ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.5)';
+        $buttonIconColor = $isDark($color3) ? '#FFFFFF' : '#000000';
+        $buttonBorderColor = $isDark($color3) ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)';
+        $sectionIconColor = $isDark($color2) ? '#FFFFFF' : '#000000';
+        
         // Convert Google Maps link to embeddable iframe URL
         // Users can paste the regular share link (from "Share" → "Copy link") - no need for embed code!
         $getEmbedUrl = function($mapsLink, $venueName) {
@@ -181,14 +191,73 @@
 
         {{-- Main Content --}}
         <main class="flex-grow container mx-auto px-4 py-8 max-w-[95%]">
+            {{-- Registration alerts --}}
+            @if (session('success'))
+                <div class="mb-4 rounded-md bg-green-100 border border-green-400 text-green-800 px-4 py-3">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 rounded-md bg-red-100 border border-red-400 text-red-800 px-4 py-3">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- Two Column Layout --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-                {{-- Event Content (80% - 4 columns) --}}
-                <div class="lg:col-span-4">
-                    {{-- Event Title --}}
-                    <h1 class="text-4xl font-bold mb-4" style="color: {{ $color3 }};">{{ $activity->title }}</h1>
-                    
-                    {{-- Event Details --}}
-                    <div class="rounded-lg shadow-md p-6 mb-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
+                {{-- Left Column: Event Information (80% - 4 columns) --}}
+                <div class="lg:col-span-4 space-y-6">
+                    {{-- Event Title and Registration Button --}}
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <h1 class="text-4xl font-bold" style="color: {{ $color3 }}; -webkit-text-stroke: 1px {{ $titleStrokeColor }}; text-stroke: 1px {{ $titleStrokeColor }};">{{ $activity->title }}</h1>
+
+                        <div class="flex items-center">
+                            @auth
+                                @if ($alreadyRegistered ?? false)
+                                    <div class="inline-flex items-center px-4 py-2 rounded-md bg-gray-200 text-gray-700 text-sm font-medium cursor-not-allowed">
+                                        You are already registered for this activity.
+                                    </div>
+                                @else
+                                    <form method="POST" action="{{ route('events.register', \Illuminate\Support\Str::slug($activity->title)) }}">
+                                        @csrf
+                                        <button
+                                            type="submit"
+                                            class="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold shadow-md transition-colors duration-200"
+                                            style="background-color: {{ $color3 }}; color: {{ $buttonIconColor }}; border: 2px solid {{ $buttonBorderColor }};"
+                                            onmouseover="this.style.filter='brightness(0.95)'"
+                                            onmouseout="this.style.filter='brightness(1)'"
+                                            onclick="return confirm('You will be joining {{ addslashes($activity->title) }} at {{ addslashes($activity->venue) }} on {{ $activity->activity_date->format('F d, Y h:i A') }}.\n\nYou are not required to fill up any form and we will use the information in your profile.');"
+                                        >
+                                            <svg class="w-5 h-5" fill="none" stroke="{{ $buttonIconColor }}" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                            </svg>
+                                            <span>Register for this activity</span>
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
+
+                            @guest
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold shadow-md transition-colors duration-200"
+                                    style="background-color: {{ $color3 }}; color: {{ $buttonIconColor }}; border: 2px solid {{ $buttonBorderColor }};"
+                                    onmouseover="this.style.filter='brightness(0.95)'"
+                                    onmouseout="this.style.filter='brightness(1)'"
+                                    onclick="openGuestRegistrationForm()"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="{{ $buttonIconColor }}" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    <span>Register for this activity</span>
+                                </button>
+                            @endguest
+                        </div>
+                    </div>
+
+                    {{-- Venue and Date Time Card --}}
+                    <div class="rounded-lg shadow-md p-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 {{ $activity->venue_google_maps_link ? 'md:grid-cols-2' : '' }} gap-4">
                                 @if($activity->venue_google_maps_link)
@@ -219,7 +288,7 @@
                                                         target="_blank" 
                                                         rel="noopener noreferrer"
                                                         class="underline font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
-                                                        style="color: {{ $color3 }}"
+                                                        style="color: {{ $color3 }}; -webkit-text-stroke: 0.2px {{ $sectionHeadingStrokeColor }}; text-stroke: 1px {{ $sectionHeadingStrokeColor }};"
                                                     >
                                                         click this link
                                                     </a>
@@ -234,7 +303,7 @@
                                 <div class="space-y-4">
                                     {{-- Venue Information --}}
                                     <div class="flex items-start gap-3">
-                                        <svg class="w-6 h-6 flex-shrink-0 mt-1" style="color: {{ $color3 }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="none" stroke="{{ $sectionIconColor }}" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
@@ -246,7 +315,7 @@
                                     
                                     {{-- Date & Time --}}
                                     <div class="flex items-start gap-3">
-                                        <svg class="w-6 h-6 flex-shrink-0 mt-1" style="color: {{ $color3 }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-6 h-6 flex-shrink-0 mt-1" fill="none" stroke="{{ $sectionIconColor }}" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                         <div>
@@ -260,8 +329,8 @@
                     </div>
 
                     {{-- Event Description --}}
-                    <div class="rounded-lg shadow-md p-6 mb-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
-                        <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }};">Event Description</h2>
+                    <div class="rounded-lg shadow-md p-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
+                        <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }}; -webkit-text-stroke: 1px {{ $sectionHeadingStrokeColor }}; text-stroke: 2px {{ $sectionHeadingStrokeColor }};">Event Description</h2>
                         <div class="ql-editor prose max-w-none">
                             {!! $activity->description !!}
                         </div>
@@ -290,38 +359,36 @@
                         ];
                     @endphp
                     <div class="rounded-lg shadow-md p-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
-                        <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }};">Share this event</h2>
+                        <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }}; -webkit-text-stroke: 2px {{ $sectionHeadingStrokeColor }}; text-stroke: 1px {{ $sectionHeadingStrokeColor }};">Share this event</h2>
                         <div class="flex flex-wrap gap-3">
                     {{-- Facebook Share --}}
-                    <a 
-                        href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <button
+                        type="button"
+                        onclick="shareToSocialMedia('facebook', 'https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}')"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-md hover:bg-[#166FE5] transition-colors duration-200"
                     >
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                         </svg>
                         <span class="sr-only">Facebook</span>
-                    </a>
+                    </button>
 
                     {{-- X (Twitter) Share --}}
-                    <a 
-                        href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($activity->title) }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <button
+                        type="button"
+                        onclick="shareToSocialMedia('twitter', 'https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($activity->title) }}')"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-[#000000] text-white rounded-md hover:bg-[#000000] transition-colors duration-200"
                     >
                         <svg class="w-5 h-5" viewBox="0 0 1200 1226.37" aria-hidden="true">
                             <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" fill="white"/>
                         </svg>
                         <span class="sr-only">X (Twitter)</span>
-                    </a>
+                    </button>
 
                         {{-- Instagram --}}
                         <button
                             type="button"
-                            onclick="shareToInstagram()"
+                            onclick="shareToSocialMedia('instagram', 'https://www.instagram.com/')"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#FCB045] text-white rounded-md hover:opacity-90 transition-opacity duration-200"
                         >
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -329,26 +396,35 @@
                             </svg>
                             <span class="sr-only">Instagram</span>
                         </button>
+                    </div>
+                    </div>
 
-                        {{-- Copy sharing details --}}
+            {{-- Sharing Details Modal --}}
+            <div id="sharing-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center transition-opacity duration-300 ease-out" style="background-color: rgba(0, 0, 0, 0); -webkit-backdrop-filter: blur(0px); backdrop-filter: blur(0px);">
+                <div id="sharing-modal-content" class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6 transform transition-all duration-300 ease-out scale-95 opacity-0 touch-manipulation">
+                    <div class="text-center">
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Sharing Details Copied!</h3>
+                        <p class="text-sm text-gray-600 mb-6">
+                            The event details have been copied to your clipboard. Paste this on your post and it's ready for posting.
+                        </p>
                         <button
                             type="button"
-                            onclick="copyEventLink()"
-                            class="inline-flex items-center gap-2 px-4 py-2 text-white rounded-md transition-colors duration-200"
-                            style="background-color: {{ $activity->accent_color_3 ?? '#FAB95B' }};"
-                            onmouseover="this.style.backgroundColor='{{ $activity->accent_color_3 ?? '#FAB95B' }}'; this.style.filter='brightness(0.95)';"
-                            onmouseout="this.style.backgroundColor='{{ $activity->accent_color_3 ?? '#FAB95B' }}'; this.style.filter='brightness(1)';"
+                            onclick="closeSharingModal()"
+                            class="w-full px-4 py-2 bg-[#FAB95B] text-[#013141] font-semibold rounded-md hover:bg-[#F9A84D] transition-colors duration-200"
                         >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                            </svg>
-                            <span id="copy-link-text">Copy sharing details</span>
+                            OK
                         </button>
                     </div>
                 </div>
+            </div>
                 </div>
 
-                {{-- LGCDD / DILG-NCR Ads Sidebar (20% - 1 column) --}}
+                {{-- Right Column: Ads Sidebar (20% - 1 column) --}}
                 <aside class="lg:col-span-1">
                     <div class="bg-[#E8E2DB] rounded-lg shadow-md p-6 space-y-6">
                         <div class="border-l-4 border-[#0a7ca1] pl-4">
@@ -482,6 +558,484 @@
                     </div>
                 </aside>
             </div>
+
+            {{-- Guest registration form (for users without an account) --}}
+                    @guest
+                    <div
+                        id="guest-registration-form"
+                        class="mt-8"
+                        style="{{ (!auth()->check() && ($errors->any() || old('first_name'))) ? '' : 'display: none;' }}"
+                    >
+                        <hr class="mb-6 border-[#c5b5a4]">
+
+                        <div class="rounded-lg shadow-md p-6 backdrop-blur-sm" style="background-color: {{ $color2Rgba }}; color: {{ $color2Text }};">
+                            <h2 class="text-2xl font-bold mb-4" style="color: {{ $color3 }}; -webkit-text-stroke: 1px {{ $sectionHeadingStrokeColor }}; text-stroke: 2px {{ $sectionHeadingStrokeColor }};">Event Registration Form</h2>
+
+                            <p class="mb-4 text-sm">
+                                <strong>Note:</strong> If you already have a CAPDEVhub account, you do not need to fill out this form.
+                                Please
+                                <a
+                                    href="{{ route('login', ['redirect' => url()->current()]) }}"
+                                    class="font-semibold underline"
+                                    style="color: {{ $color3 }}; -webkit-text-stroke: 1px {{ $sectionHeadingStrokeColor }}; text-stroke: 1px {{ $sectionHeadingStrokeColor }};"
+                                >
+                                    login first
+                                </a>
+                                and then return to this page to register using your profile information.
+                            </p>
+
+                            {{-- Data Privacy and Consent Notice (match register page design) --}}
+                            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-900 rounded-r-lg">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-900 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <h3 class="text-sm font-semibold text-blue-900 mb-2">Data Privacy and Consent Notice</h3>
+                                        <p class="text-sm text-gray-700 leading-relaxed">
+                                            By registering, you acknowledge and consent to the collection, generation, use, processing, storage, and retention of your personal
+                                            data provided in this registration form for the purpose of Capacity Development events organized by the Local Government Capability
+                                            Development Division (LGCDD) of the Department of the Interior and Local Government - National Capital Region (DILG NCR).
+                                        </p>
+                                        <p class="text-sm text-gray-700 leading-relaxed mt-2">
+                                            You also grant the LGCDD permission to take your photograph and include you in video recordings for documentation and promotional
+                                            purposes related to capacity development activities. You understand that the collection, processing, and use of your personal data
+                                            shall be in strict accordance with the <strong>Data Privacy Act of 2012 (Republic Act No. 10173)</strong> and other applicable privacy
+                                            laws and regulations of the Philippines.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Important Note on Certificate Details (match register page design) --}}
+                            <div class="mb-6 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-lg">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-amber-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <p class="text-sm text-amber-800 leading-relaxed">
+                                            <strong>Important:</strong> The personal information you provide in this section will be used exactly as entered for generating event
+                                            certificates. Please ensure all details (name, suffix, etc.) are accurate and complete, as they will appear on your official
+                                            certificates of participation/completion.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form method="POST" action="{{ route('events.register', \Illuminate\Support\Str::slug($activity->title)) }}" class="space-y-6">
+                                @csrf
+
+                                {{-- Personal Information --}}
+                                <div class="border-b border-gray-200 pb-4">
+                                    <h3 class="text-lg font-semibold mb-3">Personal Information</h3>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                First Name <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="first_name"
+                                                value="{{ old('first_name') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('first_name') border-red-500 @enderror"
+                                            >
+                                            @error('first_name')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Middle Initial
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="middle_initial"
+                                                value="{{ old('middle_initial') }}"
+                                                maxlength="1"
+                                                pattern="[A-Za-z]"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('middle_initial') border-red-500 @enderror"
+                                                style="text-transform: uppercase;"
+                                            >
+                                            @error('middle_initial')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Last Name <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="last_name"
+                                                value="{{ old('last_name') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('last_name') border-red-500 @enderror"
+                                            >
+                                            @error('last_name')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Suffix (Optional)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="suffix"
+                                                value="{{ old('suffix') }}"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('suffix') border-red-500 @enderror"
+                                                placeholder="Jr., Sr., III, etc."
+                                            >
+                                            @error('suffix')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Sex / Gender <span class="text-red-500">*</span>
+                                            </label>
+                                            <select
+                                                name="gender"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('gender') border-red-500 @enderror"
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                                                <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                                                <option value="Prefer not to say" {{ old('gender') == 'Prefer not to say' ? 'selected' : '' }}>Prefer not to say</option>
+                                            </select>
+                                            @error('gender')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Date of Birth <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="date"
+                                                name="date_of_birth"
+                                                value="{{ old('date_of_birth') }}"
+                                                required
+                                                max="{{ date('Y-m-d', strtotime('-1 day')) }}"
+                                                min="1900-01-01"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('date_of_birth') border-red-500 @enderror"
+                                            >
+                                            @error('date_of_birth')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- PWD Information --}}
+                                <div class="border-b border-gray-200 pb-4">
+                                    <h3 class="text-lg font-semibold mb-4">Person with Disability Information</h3>
+
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">
+                                            Are you a person with disability? <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex flex-wrap gap-6">
+                                            <label class="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="is_pwd"
+                                                    value="1"
+                                                    {{ old('is_pwd') == '1' ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
+                                                    onchange="toggleGuestAssistanceField()"
+                                                >
+                                                <span class="ml-2 text-sm">Yes</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="is_pwd"
+                                                    value="0"
+                                                    {{ old('is_pwd', '0') == '0' ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
+                                                    onchange="toggleGuestAssistanceField()"
+                                                >
+                                                <span class="ml-2 text-sm">No</span>
+                                            </label>
+                                        </div>
+                                        @error('is_pwd')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div id="guest_assistance_field" class="mt-4" style="display: none;">
+                                        <label class="block text-sm font-medium mb-2">
+                                            Do you require assistance? <span class="text-red-500">*</span>
+                                        </label>
+                                        <div class="flex flex-wrap gap-6">
+                                            <label class="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="requires_assistance"
+                                                    value="1"
+                                                    {{ old('requires_assistance') == '1' ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
+                                                >
+                                                <span class="ml-2 text-sm">Yes</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input
+                                                    type="radio"
+                                                    name="requires_assistance"
+                                                    value="0"
+                                                    {{ old('requires_assistance') == '0' ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-[#0a7ca1] focus:ring-[#0a7ca1] border-gray-300"
+                                                >
+                                                <span class="ml-2 text-sm">No</span>
+                                            </label>
+                                        </div>
+                                        @error('requires_assistance')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- Professional Information --}}
+                                <div class="border-b border-gray-200 pb-4">
+                                    <h3 class="text-lg font-semibold mb-4">Professional Information</h3>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Office <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="office"
+                                                value="{{ old('office') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('office') border-red-500 @enderror"
+                                            >
+                                            @error('office')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Position <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="position"
+                                                value="{{ old('position') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('position') border-red-500 @enderror"
+                                            >
+                                            @error('position')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                LGU/Organization <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="lgu_organization"
+                                                value="{{ old('lgu_organization') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('lgu_organization') border-red-500 @enderror"
+                                            >
+                                            @error('lgu_organization')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Contact Information --}}
+                                <div class="border-b border-gray-200 pb-4">
+                                    <h3 class="text-lg font-semibold mb-4">Contact Information</h3>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Contact Number <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                name="contact_number"
+                                                value="{{ old('contact_number') }}"
+                                                required
+                                                pattern="[0-9+\-() ]+"
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('contact_number') border-red-500 @enderror"
+                                                placeholder="09XX XXX XXXX"
+                                            >
+                                            @error('contact_number')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">
+                                                Email Address <span class="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value="{{ old('email') }}"
+                                                required
+                                                class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('email') border-red-500 @enderror"
+                                                placeholder="your.email@example.com"
+                                            >
+                                            @error('email')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <label class="block text-sm font-medium mb-2">
+                                            Dietary Restrictions
+                                        </label>
+                                        <textarea
+                                            name="dietary_restrictions"
+                                            rows="3"
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('dietary_restrictions') border-red-500 @enderror"
+                                            placeholder="Please specify any dietary restrictions or allergies"
+                                        >{{ old('dietary_restrictions') }}</textarea>
+                                        @error('dietary_restrictions')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- Captcha --}}
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">Security Check</h3>
+                                    <p class="text-sm mb-3">
+                                        Please enter the characters shown in the image below. This helps us prevent automated or fraudulent registrations.
+                                    </p>
+
+                                    <div class="flex flex-wrap items-center gap-4 mb-3">
+                                        <img
+                                            id="captcha-image"
+                                            src="{{ route('captcha.image') }}"
+                                            alt="CAPTCHA"
+                                            class="rounded-md border border-[#c5b5a4] bg-[#E8E2DB] px-2 py-1"
+                                        >
+                                        <button
+                                            type="button"
+                                            onclick="reloadCaptcha()"
+                                            class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-[#013141] bg-[#c5b5a4] hover:bg-[#b39f8a] transition-colors"
+                                        >
+                                            Reload Captcha
+                                        </button>
+                                    </div>
+
+                                    <div class="max-w-xs">
+                                        <label class="block text-sm font-medium mb-2">
+                                            Enter the text shown above <span class="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="captcha"
+                                            required
+                                            class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('captcha') border-red-500 @enderror"
+                                            autocomplete="off"
+                                        >
+                                        @error('captcha')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button
+                                        type="submit"
+                                        class="w-full inline-flex justify-center items-center gap-2 px-4 py-3 rounded-md text-sm font-semibold shadow-md transition-colors duration-200"
+                                        style="background-color: {{ $color3 }}; color: {{ $buttonIconColor }}; border: 2px solid {{ $buttonBorderColor }};"
+                                        onmouseover="this.style.filter='brightness(0.95)'"
+                                        onmouseout="this.style.filter='brightness(1)'"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="{{ $buttonIconColor }}" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span>Submit Registration</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    @endguest
+
+                    {{-- Authenticated registration confirmation modal --}}
+                    @auth
+                    <div
+                        x-show="showUserConfirm"
+                        x-cloak
+                        class="fixed inset-0 z-40 flex items-center justify-center"
+                        style="background-color: rgba(0, 0, 0, 0.5);"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0"
+                        @keydown.escape.window="showUserConfirm = false"
+                    >
+                        <div
+                            class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4"
+                            @click.away="showUserConfirm = false"
+                        >
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Confirm Registration</h3>
+                            <p class="text-sm text-gray-700 mb-4">
+                                You will be joining <strong>{{ $activity->title }}</strong> at
+                                <strong>{{ $activity->venue }}</strong> on
+                                <strong>{{ $activity->activity_date->format('F d, Y h:i A') }}</strong>.
+                            </p>
+                            <p class="text-sm text-gray-700 mb-4">
+                                You are <strong>not required to fill up any form</strong>. We will use the information in your CAPDEVhub
+                                profile for this registration.
+                            </p>
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button
+                                    type="button"
+                                    class="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                                    @click="showUserConfirm = false"
+                                >
+                                    Cancel
+                                </button>
+                                <form method="POST" action="{{ route('events.register', \Illuminate\Support\Str::slug($activity->title)) }}">
+                                    @csrf
+                                    <button
+                                        type="submit"
+                                        class="px-4 py-2 rounded-md text-sm font-semibold text-white"
+                                        style="background-color: {{ $color3 }};"
+                                        onmouseover="this.style.filter='brightness(0.95)'"
+                                        onmouseout="this.style.filter='brightness(1)'"
+                                    >
+                                        Confirm Registration
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    @endauth
+            </div>
         </main>
 
         {{-- Footer --}}
@@ -524,39 +1078,196 @@
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0" nonce="capdevhub"></script>
 
     <script>
-        function copyEventLink() {
+        // Toggle PWD assistance field for guest registration form
+        function toggleGuestAssistanceField() {
+            var isPwd = document.querySelector('input[name="is_pwd"]:checked');
+            var assistanceField = document.getElementById('guest_assistance_field');
+
+            if (! assistanceField) {
+                return;
+            }
+
+            if (isPwd && isPwd.value === '1') {
+                assistanceField.style.display = 'block';
+                assistanceField.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+                    radio.required = true;
+                });
+            } else {
+                assistanceField.style.display = 'none';
+                assistanceField.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+                    radio.required = false;
+                    radio.checked = false;
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleGuestAssistanceField();
+        });
+
+        function openGuestRegistrationForm() {
+            var formContainer = document.getElementById('guest-registration-form');
+            if (! formContainer) {
+                return;
+            }
+            formContainer.style.display = 'block';
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function reloadCaptcha() {
+            var img = document.getElementById('captcha-image');
+            if (img) {
+                var baseSrc = '{{ route('captcha.image') }}';
+                img.src = baseSrc + '?t=' + Date.now();
+            }
+        }
+
+        // Store the social media URL to open after modal is closed
+        let pendingSocialMediaUrl = null;
+
+        // Fallback clipboard function for older browsers
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return successful;
+            } catch (err) {
+                document.body.removeChild(textArea);
+                return false;
+            }
+        }
+
+        // Copy to clipboard with fallback
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text);
+            } else {
+                // Fallback for older browsers and non-HTTPS
+                return new Promise(function(resolve, reject) {
+                    if (fallbackCopyToClipboard(text)) {
+                        resolve();
+                    } else {
+                        reject(new Error('Failed to copy'));
+                    }
+                });
+            }
+        }
+
+        function shareToSocialMedia(platform, url) {
+            // @ts-ignore - Blade directive, not a decorator
             const templates = @json($sharingTemplates);
             const randomIndex = Math.floor(Math.random() * templates.length);
             const sharingDetails = templates[randomIndex] || templates[0];
 
-            navigator.clipboard.writeText(sharingDetails).then(function() {
-                const buttonText = document.getElementById('copy-link-text');
-                const originalText = buttonText.textContent;
-                buttonText.textContent = 'Sharing details copied!';
-                setTimeout(function() {
-                    buttonText.textContent = originalText;
-                }, 2000);
+            // Copy sharing details to clipboard with fallback
+            copyToClipboard(sharingDetails).then(function() {
+                // Store the URL to open after modal is closed
+                pendingSocialMediaUrl = url;
+                
+                // Show the modal with animation
+                const modal = document.getElementById('sharing-modal');
+                const modalContent = document.getElementById('sharing-modal-content');
+                if (modal && modalContent) {
+                    // Remove hidden class first
+                    modal.classList.remove('hidden');
+                    // Prevent body scroll on mobile
+                    document.body.style.overflow = 'hidden';
+                    // Force reflow to ensure the transition works
+                    void modal.offsetWidth;
+                    // Trigger animation by updating styles
+                    setTimeout(function() {
+                        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        // Add webkit prefix for iOS Safari
+                        modal.style.webkitBackdropFilter = 'blur(4px)';
+                        modal.style.backdropFilter = 'blur(4px)';
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                }
             }).catch(function(err) {
                 console.error('Failed to copy sharing details:', err);
-                alert('Failed to copy. Please copy manually:\n\n' + sharingDetails);
+                // If clipboard fails, still show modal and open the social media link
+                pendingSocialMediaUrl = url;
+                const modal = document.getElementById('sharing-modal');
+                const modalContent = document.getElementById('sharing-modal-content');
+                if (modal && modalContent) {
+                    modal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden';
+                    void modal.offsetWidth;
+                    setTimeout(function() {
+                        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        modal.style.webkitBackdropFilter = 'blur(4px)';
+                        modal.style.backdropFilter = 'blur(4px)';
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                }
             });
         }
 
-        function shareToInstagram() {
-            // Instagram doesn't have a direct share URL, so we'll copy the link and open Instagram
-            const url = window.location.href;
-            const text = '{{ $activity->title }}';
+        function closeSharingModal() {
+            const modal = document.getElementById('sharing-modal');
+            const modalContent = document.getElementById('sharing-modal-content');
             
-            // Copy link to clipboard first
-            navigator.clipboard.writeText(url).then(function() {
-                // Open Instagram (user can paste the link manually)
-                window.open('https://www.instagram.com/', '_blank');
-                alert('Link copied! Open Instagram and paste it in your story or post.');
-            }).catch(function(err) {
-                // Fallback: show the URL
-                alert('Please copy this link and share it on Instagram:\n' + url);
-            });
+            if (modal && modalContent) {
+                // Start fade out animation
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                modal.style.webkitBackdropFilter = 'blur(0px)';
+                modal.style.backdropFilter = 'blur(0px)';
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+                
+                // Wait for animation to complete before hiding
+                setTimeout(function() {
+                    modal.classList.add('hidden');
+                    
+                    // Open the social media URL if it was stored
+                    if (pendingSocialMediaUrl) {
+                        window.open(pendingSocialMediaUrl, '_blank');
+                        pendingSocialMediaUrl = null;
+                    }
+                }, 300); // Match the transition duration
+            } else {
+                // Fallback if elements not found
+                document.body.style.overflow = '';
+                if (pendingSocialMediaUrl) {
+                    window.open(pendingSocialMediaUrl, '_blank');
+                    pendingSocialMediaUrl = null;
+                }
+            }
         }
+
+        // Close modal when clicking/touching outside of it
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('sharing-modal');
+            if (modal) {
+                // Handle click events
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeSharingModal();
+                    }
+                });
+                // Handle touch events for mobile
+                modal.addEventListener('touchend', function(e) {
+                    if (e.target === modal) {
+                        e.preventDefault();
+                        closeSharingModal();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
