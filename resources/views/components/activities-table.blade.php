@@ -45,7 +45,7 @@ new class extends Component
             'formData.venue' => 'required|string|max:255',
             'formData.venue_google_maps_link' => 'nullable|url|max:500',
             'formData.activity_date' => 'required|date|after_or_equal:today',
-            'formData.registration_start' => 'required|date',
+            'formData.registration_start' => 'required|date|after_or_equal:today',
             'formData.registration_end' => 'required|date|after:formData.registration_start',
             'formData.shareable_link' => 'required|string|max:255|regex:/^[a-zA-Z0-9\-_]+$/',
             'formData.description' => 'nullable|string',

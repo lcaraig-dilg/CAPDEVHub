@@ -59,14 +59,14 @@ new class extends Component
 
         if ($this->editingUserId) {
             $rules['formData.email'] = 'required|email|unique:users,email,' . $this->editingUserId;
-            $rules['formData.username'] = 'nullable|string|max:255|unique:users,username,' . $this->editingUserId;
+            $rules['formData.username'] = 'required|string|max:255|unique:users,username,' . $this->editingUserId;
             // Password is optional when editing
             if (!empty($this->formData['password'])) {
                 $rules['formData.password'] = 'string|min:8|confirmed';
             }
         } else {
             $rules['formData.email'] = 'required|email|unique:users,email';
-            $rules['formData.username'] = 'nullable|string|max:255|unique:users,username';
+            $rules['formData.username'] = 'required|string|max:255|unique:users,username';
             $rules['formData.password'] = 'required|string|min:8|confirmed';
         }
 
@@ -202,7 +202,7 @@ new class extends Component
             }
             $name = trim($name);
 
-            $userData = [
+        $userData = [
                 'first_name' => $this->formData['first_name'],
                 'middle_initial' => !empty($this->formData['middle_initial']) ? strtoupper($this->formData['middle_initial']) : null,
                 'last_name' => $this->formData['last_name'],
@@ -217,7 +217,7 @@ new class extends Component
                 'lgu_organization' => $this->formData['lgu_organization'],
                 'contact_number' => $this->formData['contact_number'],
                 'email' => $this->formData['email'],
-                'username' => $this->formData['username'] ?? null,
+                'username' => $this->formData['username'],
                 'dietary_restrictions' => $this->formData['dietary_restrictions'] ?? null,
                 'role' => $this->formData['role'],
                 'name' => $name,
@@ -232,10 +232,6 @@ new class extends Component
                 $user->update($userData);
                 session()->flash('success', 'User updated successfully.');
             } else {
-                // Generate username from email if not provided
-                if (empty($this->formData['username'])) {
-                    $userData['username'] = explode('@', $this->formData['email'])[0];
-                }
                 $userData['password'] = $this->formData['password'];
                 User::create($userData);
                 session()->flash('success', 'User created successfully.');
