@@ -12,6 +12,10 @@
     <form method="POST" action="{{ route('login') }}" class="space-y-6">
         @csrf
 
+        @if (!empty($redirect))
+            <input type="hidden" name="redirect" value="{{ $redirect }}">
+        @endif
+
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                 Email Address or Username

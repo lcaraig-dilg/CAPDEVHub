@@ -35,4 +35,9 @@ class Activity extends Model
     {
         return \Illuminate\Support\Str::slug($this->title);
     }
+
+    public function registrations()
+    {
+        return $this->hasMany(ActivityRegistration::class);
+    }
 }

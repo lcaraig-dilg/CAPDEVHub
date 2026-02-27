@@ -15,13 +15,18 @@ class LoginController extends Controller
      *
      * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
+
+        // Optional redirect back to a specific page after successful login
+        $redirect = $request->query('redirect');
         
-        return view('auth.login');
+        return view('auth.login', [
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -61,6 +66,11 @@ class LoginController extends Controller
         if (Auth::attempt($attemptCredentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
             RateLimiter::clear($key);
+
+            // Prefer explicit redirect parameter if provided (e.g. from event registration flow)
+            if ($request->filled('redirect')) {
+                return redirect()->to($request->input('redirect'));
+            }
             
             return redirect()->intended(route('dashboard'));
         }
