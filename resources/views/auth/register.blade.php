@@ -5,7 +5,7 @@
 @section('content-width', 'max-w-5xl')
 
 @section('content')
-<div class="bg-white shadow-lg rounded-lg p-8">
+<div class="bg-[#E8E2DB] shadow-lg rounded-lg p-8">
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
         <p class="text-gray-600">Register for CAPDEVhub access</p>
@@ -67,7 +67,7 @@
                         name="first_name" 
                         value="{{ old('first_name') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('first_name') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('first_name') border-red-500 @enderror"
                     >
                     @error('first_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -85,7 +85,7 @@
                         value="{{ old('middle_initial') }}"
                         maxlength="1"
                         pattern="[A-Za-z]"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('middle_initial') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('middle_initial') border-red-500 @enderror"
                         style="text-transform: uppercase;"
                     >
                     @error('middle_initial')
@@ -103,7 +103,7 @@
                         name="last_name" 
                         value="{{ old('last_name') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('last_name') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('last_name') border-red-500 @enderror"
                     >
                     @error('last_name')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -119,7 +119,7 @@
                         id="suffix" 
                         name="suffix" 
                         value="{{ old('suffix') }}"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('suffix') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('suffix') border-red-500 @enderror"
                         placeholder="Jr., Sr., III, etc."
                     >
                     @error('suffix')
@@ -137,7 +137,7 @@
                         id="gender" 
                         name="gender" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('gender') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('gender') border-red-500 @enderror"
                     >
                         <option value="">Select Gender</option>
                         <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
@@ -161,7 +161,7 @@
                         required 
                         max="{{ date('Y-m-d', strtotime('-1 day')) }}"
                         min="1900-01-01"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('date_of_birth') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('date_of_birth') border-red-500 @enderror"
                     >
                     @error('date_of_birth')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -177,7 +177,7 @@
                         id="age" 
                         name="age" 
                         readonly
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-600"
+                        class="bg-gray-300 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-600"
                     >
                 </div>
             </div>
@@ -267,7 +267,7 @@
                         name="office" 
                         value="{{ old('office') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('office') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('office') border-red-500 @enderror"
                     >
                     @error('office')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -284,7 +284,7 @@
                         name="position" 
                         value="{{ old('position') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('position') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('position') border-red-500 @enderror"
                     >
                     @error('position')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -301,7 +301,7 @@
                         name="lgu_organization" 
                         value="{{ old('lgu_organization') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('lgu_organization') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('lgu_organization') border-red-500 @enderror"
                     >
                     @error('lgu_organization')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -326,7 +326,7 @@
                         value="{{ old('contact_number') }}"
                         required 
                         pattern="[0-9+\-() ]+"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('contact_number') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('contact_number') border-red-500 @enderror"
                         placeholder="09XX XXX XXXX"
                     >
                     @error('contact_number')
@@ -344,7 +344,7 @@
                         name="email" 
                         value="{{ old('email') }}"
                         required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
                         placeholder="your.email@example.com"
                     >
                     @error('email')
@@ -361,7 +361,7 @@
                     id="dietary_restrictions" 
                     name="dietary_restrictions" 
                     rows="3"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('dietary_restrictions') border-red-500 @enderror"
+                    class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('dietary_restrictions') border-red-500 @enderror"
                     placeholder="Please specify any dietary restrictions or allergies"
                 >{{ old('dietary_restrictions') }}</textarea>
                 @error('dietary_restrictions')
@@ -370,29 +370,27 @@
             </div>
         </div>
 
-        <!-- Account Security Section -->
+        <!-- Account Information Section -->
         <div>
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-
-            <div class="mt-4">
-                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                    Username
-                </label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    value="{{ old('username') }}"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('username') border-red-500 @enderror"
-                    placeholder="Leave blank to auto-generate from email"
-                >
-                @error('username')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-                <p class="mt-1 text-xs text-gray-500">Leave blank to auto-generate from your email address</p>
-            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                        Username <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        value="{{ old('username') }}"
+                        required
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('username') border-red-500 @enderror"
+                    >
+                    @error('username')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
                         Password <span class="text-red-500">*</span>
@@ -403,7 +401,7 @@
                         name="password" 
                         required 
                         minlength="8"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
                         placeholder="Minimum 8 characters"
                     >
                     @error('password')
@@ -411,19 +409,59 @@
                     @enderror
                     <p class="mt-1 text-xs text-gray-500">Password must be at least 8 characters long</p>
                 </div>
+            </div>
 
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                        Confirm Password <span class="text-red-500">*</span>
-                    </label>
-                    <input 
-                        type="password" 
-                        id="password_confirmation" 
-                        name="password_confirmation" 
-                        required 
-                        minlength="8"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1]"
+            <div class="mt-4">
+                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm Password <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    type="password" 
+                    id="password_confirmation" 
+                    name="password_confirmation" 
+                    required 
+                    minlength="8"
+                    class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1]"
+                >
+            </div>
+
+            <!-- Captcha (Security Check) -->
+            <div class="mt-6 border-t border-gray-200 pt-4">
+                <h3 class="text-lg font-semibold mb-3">Security Check</h3>
+                <p class="text-sm mb-3 text-gray-700">
+                    Please enter the characters shown in the image below. This helps us prevent automated or fraudulent registrations.
+                </p>
+
+                <div class="flex flex-wrap items-center gap-4 mb-3">
+                    <img
+                        id="captcha-image"
+                        src="{{ route('captcha.image') }}"
+                        alt="CAPTCHA"
+                        class="rounded-md border border-[#c5b5a4] bg-[#E8E2DB] px-2 py-1"
                     >
+                    <button
+                        type="button"
+                        onclick="reloadCaptcha()"
+                        class="inline-flex items-center px-3 py-2 rounded-md text-sm font-medium text-[#013141] bg-[#c5b5a4] hover:bg-[#b39f8a] transition-colors"
+                    >
+                        Reload Captcha
+                    </button>
+                </div>
+
+                <div class="max-w-xs">
+                    <label class="block text-sm font-medium mb-2">
+                        Enter the text shown above <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="captcha"
+                        required
+                        autocomplete="off"
+                        class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] text-gray-900 @error('captcha') border-red-500 @enderror"
+                    >
+                    @error('captcha')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -482,5 +520,14 @@
     document.addEventListener('DOMContentLoaded', function() {
         toggleAssistanceField();
     });
+
+    // Reload captcha image (same behavior as event registration page)
+    function reloadCaptcha() {
+        const img = document.getElementById('captcha-image');
+        if (img) {
+            const baseSrc = "{{ route('captcha.image') }}";
+            img.src = baseSrc + '?t=' + Date.now();
+        }
+    }
 </script>
 @endsection

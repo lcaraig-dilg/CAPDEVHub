@@ -3,10 +3,10 @@
 @section('title', 'Login - CAPDEVhub')
 
 @section('content')
-<div class="bg-white shadow-lg rounded-lg p-8">
+<div class="bg-[#E8E2DB] shadow-lg rounded-lg p-8">
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-        <p class="text-gray-600">Sign in to your CAPDEVhub account</p>
+        <p class="text-gray-600">Sign in to your CAPDEV Hub account</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}" class="space-y-6">
@@ -27,7 +27,7 @@
                 value="{{ old('email') }}"
                 required 
                 autofocus
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
+                class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('email') border-red-500 @enderror"
                 placeholder="Enter your email or username"
             >
             @error('email')
@@ -44,7 +44,7 @@
                 id="password" 
                 name="password" 
                 required
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
+                class="bg-white w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0a7ca1] focus:border-[#0a7ca1] @error('password') border-red-500 @enderror"
                 placeholder="Enter your password"
             >
             @error('password')

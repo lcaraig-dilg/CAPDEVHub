@@ -16,7 +16,7 @@
 <body class="bg-gray-50">
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-gray-200 text-gray-900 shadow-sm border-b border-gray-300">
+        <header class="bg-[#E8E2DB] text-gray-900 shadow-sm border-b border-gray-300">
             <div class="container mx-auto px-4 py-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
@@ -26,8 +26,8 @@
                             class="h-10 sm:h-12 w-auto"
                         >
                         <div>
-                            <h1 class="text-xl font-bold">CAPDEVhub</h1>
-                            <p class="text-sm text-gray-600">LGCDD - DILG NCR</p>
+                            <h1 class="text-xl font-bold text-[#097aa0]">CAPDEV Hub</h1>
+                            <p class="text-sm text-[#097aa0]">Local Government Capability Development Division - DILG NCR</p>
                         </div>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
         </header>
 
         <!-- Main Content -->
-        <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <main class="bg-[radial-gradient(circle_at_center,_#0a7ca1_40%,_#013141_98%)] flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="w-full @yield('content-width', 'max-w-md')">
                 @if (session('success'))
                     <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
